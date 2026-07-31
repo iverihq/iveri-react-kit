@@ -1,10 +1,12 @@
-const { react } = require('@iveri/eslint-config');
+// This package is `"type": "module"`, so the config file is ESM. `@iveri/eslint-config` is
+// CommonJS, which Node exposes to an ESM importer as the default export.
+import iveriEslintConfig from '@iveri/eslint-config';
 
-module.exports = [
-    ...react,
+export default [
+    ...iveriEslintConfig.react,
     {
         languageOptions: {
-            parserOptions: { tsconfigRootDir: __dirname },
+            parserOptions: { tsconfigRootDir: import.meta.dirname },
         },
     },
 ];

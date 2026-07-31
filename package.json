@@ -1,6 +1,6 @@
 {
   "name": "@iveri/react-kit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Shared React UI primitives for Iveri admin apps. Placeholder — filled from what conduit-admin-web actually needed.",
   "license": "MIT",
   "repository": {
@@ -36,12 +36,12 @@
   },
   "prettier": "@iveri/prettier-config",
   "dependencies": {
-    "@iveri/contracts": "^0.0.1"
+    "@iveri/contracts": "^0.1.0"
   },
   "devDependencies": {
-    "@iveri/eslint-config": "^0.0.1",
-    "@iveri/prettier-config": "^0.0.1",
-    "@iveri/tsconfig": "^0.0.1",
+    "@iveri/eslint-config": "^0.1.0",
+    "@iveri/prettier-config": "^0.1.0",
+    "@iveri/tsconfig": "^0.1.0",
     "eslint": "^9.18.0",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",

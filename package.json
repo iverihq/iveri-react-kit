@@ -1,0 +1,54 @@
+{
+  "name": "@iveri/react-kit",
+  "version": "0.0.1",
+  "description": "Shared React UI primitives for Iveri admin apps. Placeholder — filled from what conduit-admin-web actually needed.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iverihq/iveri-react-kit.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
+    "build": "pnpm clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo \"@iveri/react-kit is an empty placeholder — nothing to test yet\"",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "prettier": "@iveri/prettier-config",
+  "dependencies": {
+    "@iveri/contracts": "^0.0.1"
+  },
+  "devDependencies": {
+    "@iveri/eslint-config": "^0.0.1",
+    "@iveri/prettier-config": "^0.0.1",
+    "@iveri/tsconfig": "^0.0.1",
+    "eslint": "^9.18.0",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

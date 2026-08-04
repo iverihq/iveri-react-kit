@@ -7,7 +7,7 @@ used by the Unibox frontend.
 
 ```text
 common/      cn
-component/   Button, Badge, TextField, TextAreaField, SelectField, Panel, EmptyState, Spinner
+component/   Button, Badge, TextField, TextAreaField, SelectField, CheckboxField, Panel, EmptyState, Spinner
 ```
 
 The kit depends on `@iveri/contracts` and never on `@iveri/nest-sdk`.

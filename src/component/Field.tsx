@@ -112,3 +112,36 @@ export function SelectField({ label, hint, error, options, placeholder, ...rest 
         </Field>
     );
 }
+
+interface CheckboxProps {
+    label: string;
+    hint?: ReactNode;
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    disabled?: boolean;
+}
+
+export function CheckboxField({ label, hint, checked, onChange, disabled }: CheckboxProps): JSX.Element {
+    const controlId = useId();
+
+    return (
+        <div className="flex items-start gap-2.5">
+            <input
+                id={controlId}
+                type="checkbox"
+                checked={checked}
+                disabled={disabled}
+                onChange={(event) => {
+                    onChange(event.target.checked);
+                }}
+                className="mt-0.5 h-4 w-4 rounded border-line bg-canvas text-accent focus:ring-accent"
+            />
+            <div className="flex flex-col gap-0.5">
+                <label htmlFor={controlId} className="text-sm text-ink">
+                    {label}
+                </label>
+                {hint !== undefined && <p className="text-xs leading-relaxed text-faint">{hint}</p>}
+            </div>
+        </div>
+    );
+}

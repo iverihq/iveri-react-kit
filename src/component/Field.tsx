@@ -47,7 +47,10 @@ type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'id'
     error?: string;
 };
 
-export const TextField = forwardRef<HTMLInputElement, InputProps>(function TextField({ label, hint, error, ...rest }, ref) {
+export const TextField = forwardRef<HTMLInputElement, InputProps>(function TextField(
+    { label, hint, error, ...rest },
+    ref,
+) {
     return (
         <Field label={label} hint={hint} error={error}>
             {(controlId, hasError, descriptionId) => (

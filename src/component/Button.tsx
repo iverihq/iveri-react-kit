@@ -8,15 +8,15 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md';
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-    primary: 'bg-accent text-accent-ink hover:bg-accent/90 disabled:bg-accent/40',
-    secondary: 'bg-raised text-ink border border-line hover:border-faint hover:bg-raised/70',
-    ghost: 'text-muted hover:text-ink hover:bg-raised',
-    danger: 'bg-critical/10 text-critical border border-critical/30 hover:bg-critical/20',
+    primary: 'bg-accent text-accent-ink hover:brightness-95 active:brightness-90 disabled:bg-accent/40',
+    secondary: 'border border-line bg-surface text-ink hover:border-muted hover:bg-raised active:bg-raised',
+    ghost: 'text-muted hover:bg-raised hover:text-ink active:bg-line/70',
+    danger: 'border border-critical/30 bg-critical/10 text-critical hover:bg-critical/20 active:bg-critical/25',
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
-    sm: 'h-8 px-3 text-xs gap-1.5',
-    md: 'h-9 px-4 text-sm gap-2',
+    sm: 'min-h-11 px-3 text-sm gap-1.5',
+    md: 'min-h-11 px-4 text-sm gap-2',
 };
 
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
@@ -43,8 +43,9 @@ export function Button({
         <button
             type={type}
             disabled={disabled === true || isLoading}
+            aria-busy={isLoading || undefined}
             className={cn(
-                'inline-flex items-center justify-center rounded-md font-medium transition-colors',
+                'inline-flex items-center justify-center rounded-md font-medium transition-colors duration-150',
                 'disabled:cursor-not-allowed disabled:opacity-60',
                 VARIANT_CLASS[variant],
                 SIZE_CLASS[size],

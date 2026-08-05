@@ -20,7 +20,7 @@ interface BadgeProps {
     className?: string;
 }
 
-export function Badge({ tone = 'neutral', children, title, className }: BadgeProps): JSX.Element {
+export function Badge({ tone = 'neutral', children, title, className }: Readonly<BadgeProps>): JSX.Element {
     return (
         <span
             title={title}

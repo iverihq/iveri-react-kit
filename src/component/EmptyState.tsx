@@ -7,7 +7,7 @@ interface EmptyStateProps {
     icon?: ReactNode;
 }
 
-export function EmptyState({ title, description, action, icon }: EmptyStateProps): JSX.Element {
+export function EmptyState({ title, description, action, icon }: Readonly<EmptyStateProps>): JSX.Element {
     return (
         <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
             {icon !== undefined && <div className="text-faint">{icon}</div>}

@@ -11,7 +11,14 @@ interface PanelProps {
     className?: string;
 }
 
-export function Panel({ title, actions, description, children, isFlush = false, className }: PanelProps): JSX.Element {
+export function Panel({
+    title,
+    actions,
+    description,
+    children,
+    isFlush = false,
+    className,
+}: Readonly<PanelProps>): JSX.Element {
     const hasHeader = title !== undefined || actions !== undefined;
 
     return (

@@ -38,7 +38,7 @@ export function Button({
     type = 'button',
     className,
     ...rest
-}: ButtonProps): JSX.Element {
+}: Readonly<ButtonProps>): JSX.Element {
     return (
         <button
             type={type}

@@ -14,7 +14,7 @@ interface FieldShellProps {
     children: (controlId: string, hasError: boolean) => ReactNode;
 }
 
-export function Field({ label, hint, error, children }: FieldShellProps): JSX.Element {
+export function Field({ label, hint, error, children }: Readonly<FieldShellProps>): JSX.Element {
     const controlId = useId();
     const hasError = error !== undefined && error.length > 0;
 
@@ -41,7 +41,7 @@ type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'id'
     error?: string;
 };
 
-export function TextField({ label, hint, error, ...rest }: InputProps): JSX.Element {
+export function TextField({ label, hint, error, ...rest }: Readonly<InputProps>): JSX.Element {
     return (
         <Field label={label} hint={hint} error={error}>
             {(controlId, hasError) => (
@@ -62,7 +62,7 @@ type TextAreaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'classNam
     error?: string;
 };
 
-export function TextAreaField({ label, hint, error, rows = 4, ...rest }: TextAreaProps): JSX.Element {
+export function TextAreaField({ label, hint, error, rows = 4, ...rest }: Readonly<TextAreaProps>): JSX.Element {
     return (
         <Field label={label} hint={hint} error={error}>
             {(controlId, hasError) => (
@@ -91,7 +91,7 @@ type SelectProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, 'className' | '
     placeholder?: string;
 };
 
-export function SelectField({ label, hint, error, options, placeholder, ...rest }: SelectProps): JSX.Element {
+export function SelectField({ label, hint, error, options, placeholder, ...rest }: Readonly<SelectProps>): JSX.Element {
     return (
         <Field label={label} hint={hint} error={error}>
             {(controlId, hasError) => (
@@ -121,7 +121,7 @@ interface CheckboxProps {
     disabled?: boolean;
 }
 
-export function CheckboxField({ label, hint, checked, onChange, disabled }: CheckboxProps): JSX.Element {
+export function CheckboxField({ label, hint, checked, onChange, disabled }: Readonly<CheckboxProps>): JSX.Element {
     const controlId = useId();
 
     return (

@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
-import { useId } from 'react';
+import { forwardRef, useId } from 'react';
 
 import { cn } from '../common';
 
@@ -47,11 +47,12 @@ type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'id'
     error?: string;
 };
 
-export function TextField({ label, hint, error, ...rest }: Readonly<InputProps>): JSX.Element {
+export const TextField = forwardRef<HTMLInputElement, InputProps>(function TextField({ label, hint, error, ...rest }, ref) {
     return (
         <Field label={label} hint={hint} error={error}>
             {(controlId, hasError, descriptionId) => (
                 <input
+                    ref={ref}
                     id={controlId}
                     aria-invalid={hasError}
                     aria-describedby={descriptionId}
@@ -61,7 +62,7 @@ export function TextField({ label, hint, error, ...rest }: Readonly<InputProps>)
             )}
         </Field>
     );
-}
+});
 
 type TextAreaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'id'> & {
     label: string;
@@ -69,11 +70,15 @@ type TextAreaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'classNam
     error?: string;
 };
 
-export function TextAreaField({ label, hint, error, rows = 4, ...rest }: Readonly<TextAreaProps>): JSX.Element {
+export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextAreaField(
+    { label, hint, error, rows = 4, ...rest },
+    ref,
+) {
     return (
         <Field label={label} hint={hint} error={error}>
             {(controlId, hasError, descriptionId) => (
                 <textarea
+                    ref={ref}
                     id={controlId}
                     rows={rows}
                     aria-invalid={hasError}
@@ -84,7 +89,7 @@ export function TextAreaField({ label, hint, error, rows = 4, ...rest }: Readonl
             )}
         </Field>
     );
-}
+});
 
 interface SelectOption {
     value: string;
@@ -99,11 +104,15 @@ type SelectProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, 'className' | '
     placeholder?: string;
 };
 
-export function SelectField({ label, hint, error, options, placeholder, ...rest }: Readonly<SelectProps>): JSX.Element {
+export const SelectField = forwardRef<HTMLSelectElement, SelectProps>(function SelectField(
+    { label, hint, error, options, placeholder, ...rest },
+    ref,
+) {
     return (
         <Field label={label} hint={hint} error={error}>
             {(controlId, hasError, descriptionId) => (
                 <select
+                    ref={ref}
                     id={controlId}
                     aria-invalid={hasError}
                     aria-describedby={descriptionId}
@@ -120,7 +129,7 @@ export function SelectField({ label, hint, error, options, placeholder, ...rest 
             )}
         </Field>
     );
-}
+});
 
 interface CheckboxProps {
     label: string;

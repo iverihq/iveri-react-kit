@@ -4,10 +4,16 @@
     // The react variant sets `noEmit` because it is written for Vite apps, where Vite owns
     // the emit. This is a library, so it has to emit its own JavaScript and declarations.
     "noEmit": false,
+    // Only the build has a `rootDir`. Type-checking also covers the test-runner config beside
+    // `src/`, and a `rootDir` in the shared config would reject it for a reason — where the
+    // emitted files land — that does not apply when nothing is emitted.
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "allowImportingTsExtensions": false,
     "tsBuildInfoFile": "./tsconfig.build.tsbuildinfo"
   },
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.spec.tsx"]
+  // The specs and the test-runner config are type-checked by `tsconfig.json` and must not be
+  // emitted: `rootDir` is `src`, so a config file beside it has nowhere to land in `dist`.
+  "exclude": ["node_modules", "dist", "vite.config.ts", "**/*.spec.ts", "**/*.spec.tsx"]
 }

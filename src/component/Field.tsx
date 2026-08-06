@@ -1,35 +1,41 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
-import { useId } from 'react';
+import { forwardRef, useId } from 'react';
 
 import { cn } from '../common';
 
 const CONTROL_CLASS =
-    'w-full rounded-md border bg-canvas px-3 py-2 text-sm text-ink placeholder:text-faint ' +
-    'transition-colors focus:border-accent disabled:cursor-not-allowed disabled:opacity-60';
+    'min-h-11 w-full rounded-md border bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint ' +
+    'transition-colors duration-150 focus:border-accent disabled:cursor-not-allowed disabled:bg-raised disabled:opacity-70';
 
 interface FieldShellProps {
     label: string;
     hint?: ReactNode;
     error?: string;
-    children: (controlId: string, hasError: boolean) => ReactNode;
+    children: (controlId: string, hasError: boolean, descriptionId: string | undefined) => ReactNode;
 }
 
-export function Field({ label, hint, error, children }: FieldShellProps): JSX.Element {
+export function Field({ label, hint, error, children }: Readonly<FieldShellProps>): JSX.Element {
     const controlId = useId();
+    const descriptionId = useId();
     const hasError = error !== undefined && error.length > 0;
+    const hasDescription = hasError || hint !== undefined;
 
     return (
-        <div className="flex flex-col gap-1.5">
-            <label htmlFor={controlId} className="text-xs font-medium text-muted">
+        <div className="flex flex-col gap-2">
+            <label htmlFor={controlId} className="text-sm font-medium text-ink">
                 {label}
             </label>
-            {children(controlId, hasError)}
+            {children(controlId, hasError, hasDescription ? descriptionId : undefined)}
             {hasError ? (
-                <p className="text-xs text-critical" role="alert">
+                <p id={descriptionId} className="text-sm text-critical" role="alert">
                     {error}
                 </p>
             ) : (
-                hint !== undefined && <p className="text-xs leading-relaxed text-faint">{hint}</p>
+                hint !== undefined && (
+                    <p id={descriptionId} className="text-sm leading-6 text-muted">
+                        {hint}
+                    </p>
+                )
             )}
         </div>
     );
@@ -41,20 +47,25 @@ type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'id'
     error?: string;
 };
 
-export function TextField({ label, hint, error, ...rest }: InputProps): JSX.Element {
+export const TextField = forwardRef<HTMLInputElement, InputProps>(function TextField(
+    { label, hint, error, ...rest },
+    ref,
+) {
     return (
         <Field label={label} hint={hint} error={error}>
-            {(controlId, hasError) => (
+            {(controlId, hasError, descriptionId) => (
                 <input
+                    ref={ref}
                     id={controlId}
                     aria-invalid={hasError}
+                    aria-describedby={descriptionId}
                     className={cn(CONTROL_CLASS, hasError ? 'border-critical' : 'border-line')}
                     {...rest}
                 />
             )}
         </Field>
     );
-}
+});
 
 type TextAreaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className' | 'id'> & {
     label: string;
@@ -62,21 +73,26 @@ type TextAreaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'classNam
     error?: string;
 };
 
-export function TextAreaField({ label, hint, error, rows = 4, ...rest }: TextAreaProps): JSX.Element {
+export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextAreaField(
+    { label, hint, error, rows = 4, ...rest },
+    ref,
+) {
     return (
         <Field label={label} hint={hint} error={error}>
-            {(controlId, hasError) => (
+            {(controlId, hasError, descriptionId) => (
                 <textarea
+                    ref={ref}
                     id={controlId}
                     rows={rows}
                     aria-invalid={hasError}
+                    aria-describedby={descriptionId}
                     className={cn(CONTROL_CLASS, 'font-mono', hasError ? 'border-critical' : 'border-line')}
                     {...rest}
                 />
             )}
         </Field>
     );
-}
+});
 
 interface SelectOption {
     value: string;
@@ -91,13 +107,18 @@ type SelectProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, 'className' | '
     placeholder?: string;
 };
 
-export function SelectField({ label, hint, error, options, placeholder, ...rest }: SelectProps): JSX.Element {
+export const SelectField = forwardRef<HTMLSelectElement, SelectProps>(function SelectField(
+    { label, hint, error, options, placeholder, ...rest },
+    ref,
+) {
     return (
         <Field label={label} hint={hint} error={error}>
-            {(controlId, hasError) => (
+            {(controlId, hasError, descriptionId) => (
                 <select
+                    ref={ref}
                     id={controlId}
                     aria-invalid={hasError}
+                    aria-describedby={descriptionId}
                     className={cn(CONTROL_CLASS, 'pr-8', hasError ? 'border-critical' : 'border-line')}
                     {...rest}
                 >
@@ -111,7 +132,7 @@ export function SelectField({ label, hint, error, options, placeholder, ...rest 
             )}
         </Field>
     );
-}
+});
 
 interface CheckboxProps {
     label: string;
@@ -121,11 +142,11 @@ interface CheckboxProps {
     disabled?: boolean;
 }
 
-export function CheckboxField({ label, hint, checked, onChange, disabled }: CheckboxProps): JSX.Element {
+export function CheckboxField({ label, hint, checked, onChange, disabled }: Readonly<CheckboxProps>): JSX.Element {
     const controlId = useId();
 
     return (
-        <div className="flex items-start gap-2.5">
+        <div className="flex items-start gap-3">
             <input
                 id={controlId}
                 type="checkbox"
@@ -134,13 +155,13 @@ export function CheckboxField({ label, hint, checked, onChange, disabled }: Chec
                 onChange={(event) => {
                     onChange(event.target.checked);
                 }}
-                className="mt-0.5 h-4 w-4 rounded border-line bg-canvas text-accent focus:ring-accent"
+                className="mt-0.5 h-5 w-5 rounded border-line bg-surface text-accent focus:ring-accent"
             />
-            <div className="flex flex-col gap-0.5">
-                <label htmlFor={controlId} className="text-sm text-ink">
+            <div className="flex flex-col gap-1">
+                <label htmlFor={controlId} className="text-sm font-medium text-ink">
                     {label}
                 </label>
-                {hint !== undefined && <p className="text-xs leading-relaxed text-faint">{hint}</p>}
+                {hint !== undefined && <p className="text-sm leading-6 text-muted">{hint}</p>}
             </div>
         </div>
     );

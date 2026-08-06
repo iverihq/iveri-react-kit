@@ -5,7 +5,7 @@ interface SpinnerProps {
     className?: string;
 }
 
-export function Spinner({ size = 'md', className }: SpinnerProps): JSX.Element {
+export function Spinner({ size = 'md', className }: Readonly<SpinnerProps>): JSX.Element {
     return (
         <svg
             className={cn('animate-spin', size === 'sm' ? 'h-3.5 w-3.5' : 'h-5 w-5', className)}

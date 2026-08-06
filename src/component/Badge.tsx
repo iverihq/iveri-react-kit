@@ -5,7 +5,7 @@ import { cn } from '../common';
 export type BadgeTone = 'neutral' | 'positive' | 'caution' | 'critical' | 'info' | 'accent';
 
 const TONE_CLASS: Record<BadgeTone, string> = {
-    neutral: 'bg-raised text-muted border-line',
+    neutral: 'border-line bg-raised text-muted',
     positive: 'bg-positive/10 text-positive border-positive/25',
     caution: 'bg-caution/10 text-caution border-caution/25',
     critical: 'bg-critical/10 text-critical border-critical/25',
@@ -20,13 +20,13 @@ interface BadgeProps {
     className?: string;
 }
 
-export function Badge({ tone = 'neutral', children, title, className }: BadgeProps): JSX.Element {
+export function Badge({ tone = 'neutral', children, title, className }: Readonly<BadgeProps>): JSX.Element {
     return (
         <span
             title={title}
             className={cn(
-                'inline-flex items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 font-medium',
-                'text-2xs uppercase tracking-wide',
+                'inline-flex items-center gap-1 whitespace-nowrap rounded border px-2 py-0.5 font-medium',
+                'text-2xs tracking-wide',
                 TONE_CLASS[tone],
                 className,
             )}

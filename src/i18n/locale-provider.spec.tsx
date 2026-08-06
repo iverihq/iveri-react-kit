@@ -126,16 +126,18 @@ describe('LocaleProvider', () => {
         expect(screen.getByTestId('locale').textContent).toBe('ru');
     });
 
-    it('labels every option in its own language', () => {
+    it('labels every option with its flag and its own language', () => {
         render(
             <LocaleProvider catalog={catalog} initialLocale="en">
                 <LocaleSelect label="Language" />
             </LocaleProvider>,
         );
 
+        // The name is never dropped in favour of the flag: on a platform with no flag glyphs the
+        // option would otherwise read as two letters, and a language is not a country regardless.
         expect(
             [...screen.getByLabelText<HTMLSelectElement>('Language').options].map((option) => option.textContent),
-        ).toEqual(['English', 'Русский', 'ქართული']);
+        ).toEqual(['🇬🇧  English', '🇷🇺  Русский', '🇬🇪  ქართული']);
     });
 
     it('throws when useTranslation is called outside a provider', () => {

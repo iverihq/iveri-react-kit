@@ -1,5 +1,6 @@
 import { cn } from '../common';
 
+import { localeFlag } from './locale-flag';
 import { useTranslation } from './use-translation';
 
 interface LocaleSelectProps {
@@ -35,11 +36,17 @@ export function LocaleSelect({ label, className }: Readonly<LocaleSelectProps>):
                 className,
             )}
         >
-            {locales.map((option) => (
-                <option key={option.code} value={option.code}>
-                    {option.nativeName}
-                </option>
-            ))}
+            {locales.map((option) => {
+                const flag = localeFlag(option.code);
+
+                // The flag is decoration in front of the name, never instead of it: a platform
+                // without flag glyphs renders two letters, and a language is not a country anyway.
+                return (
+                    <option key={option.code} value={option.code}>
+                        {flag ? `${flag}  ${option.nativeName}` : option.nativeName}
+                    </option>
+                );
+            })}
         </select>
     );
 }

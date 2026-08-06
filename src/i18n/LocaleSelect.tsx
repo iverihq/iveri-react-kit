@@ -43,7 +43,7 @@ export function LocaleSelect({ label, className }: Readonly<LocaleSelectProps>):
                 // without flag glyphs renders two letters, and a language is not a country anyway.
                 return (
                     <option key={option.code} value={option.code}>
-                        {flag ? `${flag}  ${option.nativeName}` : option.nativeName}
+                        {flag ? `${flag} ${option.nativeName}` : option.nativeName}
                     </option>
                 );
             })}

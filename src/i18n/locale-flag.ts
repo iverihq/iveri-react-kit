@@ -11,11 +11,13 @@
  * A locale carrying an explicit region (`pt-BR`) is honoured over the table, because that locale
  * has already said which country it means.
  */
-const FLAG_BY_LANGUAGE: Record<string, string> = {
-    en: '🇬🇧',
-    ka: '🇬🇪',
-    ru: '🇷🇺',
-};
+const FLAG_BY_LANGUAGE = new Map<string, string>(
+    Object.entries({
+        en: '🇬🇧',
+        ka: '🇬🇪',
+        ru: '🇷🇺',
+    }),
+);
 
 /** `GB` → 🇬🇧. Regional indicators sit 127397 above their ASCII letters. */
 const flagFromRegion = (region: string): string =>
@@ -35,5 +37,6 @@ export const localeFlag = (code: string): string => {
 
     if (region) return flagFromRegion(region);
 
-    return (language && FLAG_BY_LANGUAGE[language]) ?? '';
+    // `split` always yields at least one element, so the language subtag is always a string here.
+    return FLAG_BY_LANGUAGE.get(language) ?? '';
 };

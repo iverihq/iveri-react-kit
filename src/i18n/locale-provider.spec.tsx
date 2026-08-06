@@ -137,7 +137,7 @@ describe('LocaleProvider', () => {
         // option would otherwise read as two letters, and a language is not a country regardless.
         expect(
             [...screen.getByLabelText<HTMLSelectElement>('Language').options].map((option) => option.textContent),
-        ).toEqual(['🇬🇧  English', '🇷🇺  Русский', '🇬🇪  ქართული']);
+        ).toEqual(['🇬🇧 English', '🇷🇺 Русский', '🇬🇪 ქართული']);
     });
 
     it('throws when useTranslation is called outside a provider', () => {

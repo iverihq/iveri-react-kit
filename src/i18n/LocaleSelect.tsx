@@ -1,4 +1,5 @@
 import { cn } from '../common';
+import { FOCUS_RING } from '../component/Button';
 
 import { localeFlag } from './locale-flag';
 import { useTranslation } from './use-translation';
@@ -33,6 +34,7 @@ export function LocaleSelect({ label, className }: Readonly<LocaleSelectProps>):
             className={cn(
                 'min-h-11 w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink',
                 'transition-colors duration-150 focus:border-accent',
+                FOCUS_RING,
                 className,
             )}
         >

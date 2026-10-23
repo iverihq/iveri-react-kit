@@ -3,9 +3,14 @@ import { forwardRef, useId } from 'react';
 
 import { cn } from '../common';
 
+import { FOCUS_RING } from './Button';
+
 const CONTROL_CLASS =
     'min-h-11 w-full rounded-md border bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint ' +
-    'transition-colors duration-150 focus:border-accent disabled:cursor-not-allowed disabled:bg-raised disabled:opacity-70';
+    'transition-colors duration-150 focus:border-accent disabled:cursor-not-allowed disabled:bg-raised disabled:opacity-70 ' +
+    // The border colour alone was the whole focus indication, which is the one thing the design
+    // standard forbids: colour carrying meaning by itself.
+    FOCUS_RING;
 
 interface FieldShellProps {
     label: string;
@@ -155,7 +160,7 @@ export function CheckboxField({ label, hint, checked, onChange, disabled }: Read
                 onChange={(event) => {
                     onChange(event.target.checked);
                 }}
-                className="mt-0.5 h-5 w-5 rounded border-line bg-surface text-accent focus:ring-accent"
+                className={cn('mt-0.5 h-5 w-5 rounded border-line bg-surface text-accent', FOCUS_RING)}
             />
             <div className="flex flex-col gap-1">
                 <label htmlFor={controlId} className="text-sm font-medium text-ink">

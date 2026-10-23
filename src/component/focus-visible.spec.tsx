@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { LocaleProvider } from '../i18n/LocaleProvider';
-import { LocaleSelect } from '../i18n/LocaleSelect';
-import type { TranslationCatalog } from '../i18n/translation-catalog.type';
+import { LocaleProvider } from '../i18n/LocaleProvider.js';
+import { LocaleSelect } from '../i18n/LocaleSelect.js';
+import type { TranslationCatalog } from '../i18n/translation-catalog.type.js';
 
-import { Button, FOCUS_RING } from './Button';
-import { TextField } from './Field';
+import { Button, FOCUS_RING } from './Button.js';
+import { TextField } from './Field.js';
 
 /**
  * Focus has to be visible without colour.

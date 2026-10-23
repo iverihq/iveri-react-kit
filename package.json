@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "clean": "rimraf dist tsconfig.build.tsbuildinfo",
-    "build": "pnpm clean && tsc -p tsconfig.build.json",
+    "build": "pnpm clean && tsc -p tsconfig.build.json && node scripts/verify-esm.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "lint": "eslint .",

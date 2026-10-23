@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { localeFlag } from './locale-flag';
+import { localeFlag } from './locale-flag.js';
 
 describe('localeFlag', () => {
     it('maps the languages the platform ships', () => {

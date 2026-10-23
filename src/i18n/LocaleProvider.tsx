@@ -1,8 +1,8 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { formatMessage } from './format-message';
-import { LocaleContext, type LocaleContextValue } from './locale.context';
-import type { TranslationCatalog, TranslationValues } from './translation-catalog.type';
+import { formatMessage } from './format-message.js';
+import { LocaleContext, type LocaleContextValue } from './locale.context.js';
+import type { TranslationCatalog, TranslationValues } from './translation-catalog.type.js';
 
 interface LocaleProviderProps {
     /** The committed catalogue, pulled from published releases at build time. */

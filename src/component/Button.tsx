@@ -1,8 +1,8 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-import { cn } from '../common';
+import { cn } from '../common/index.js';
 
-import { Spinner } from './Spinner';
+import { Spinner } from './Spinner.js';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md';

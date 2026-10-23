@@ -1,8 +1,8 @@
-import { cn } from '../common';
-import { FOCUS_RING } from '../component/Button';
+import { cn } from '../common/index.js';
+import { FOCUS_RING } from '../component/Button.js';
 
-import { localeFlag } from './locale-flag';
-import { useTranslation } from './use-translation';
+import { localeFlag } from './locale-flag.js';
+import { useTranslation } from './use-translation.js';
 
 interface LocaleSelectProps {
     /** Accessible name for the control. Pass a translated string. */

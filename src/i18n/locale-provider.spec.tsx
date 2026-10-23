@@ -2,10 +2,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, beforeEach } from 'vitest';
 
-import { LocaleProvider } from './LocaleProvider';
-import { LocaleSelect } from './LocaleSelect';
-import type { TranslationCatalog } from './translation-catalog.type';
-import { useTranslation } from './use-translation';
+import { LocaleProvider } from './LocaleProvider.js';
+import { LocaleSelect } from './LocaleSelect.js';
+import type { TranslationCatalog } from './translation-catalog.type.js';
+import { useTranslation } from './use-translation.js';
 
 const catalog: TranslationCatalog = {
     generatedAt: '2026-08-06T00:00:00.000Z',

@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import type { CatalogLocale, TranslateFunction } from './translation-catalog.type';
+import type { CatalogLocale, TranslateFunction } from './translation-catalog.type.js';
 
 export interface LocaleContextValue {
     /** The locale being rendered. */

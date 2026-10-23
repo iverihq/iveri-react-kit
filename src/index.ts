@@ -1,3 +1,3 @@
-export * from './common';
-export * from './component';
-export * from './i18n';
+export * from './common/index.js';
+export * from './component/index.js';
+export * from './i18n/index.js';

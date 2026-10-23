@@ -1,4 +1,4 @@
-import { cn } from '../common';
+import { cn } from '../common/index.js';
 
 interface SpinnerProps {
     size?: 'sm' | 'md';

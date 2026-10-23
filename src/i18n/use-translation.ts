@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { LocaleContext, type LocaleContextValue } from './locale.context';
+import { LocaleContext, type LocaleContextValue } from './locale.context.js';
 
 /**
  * The active locale and a `t` bound to it.

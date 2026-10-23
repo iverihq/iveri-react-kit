@@ -1,9 +1,9 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 import { forwardRef, useId } from 'react';
 
-import { cn } from '../common';
+import { cn } from '../common/index.js';
 
-import { FOCUS_RING } from './Button';
+import { FOCUS_RING } from './Button.js';
 
 const CONTROL_CLASS =
     'min-h-11 w-full rounded-md border bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint ' +

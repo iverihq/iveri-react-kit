@@ -1,0 +1,186 @@
+/**
+ * The Iveri design foundation: the typefaces, the semantic tokens and the base layer.
+ *
+ * **One copy, imported by every app.** Each panel used to declare these values in its own
+ * `index.css`, which had already drifted into four variants — two of them with a different
+ * accent, and all six with `--color-faint` set to the same value as `--color-muted`, so the
+ * three-level text hierarchy the standard describes was actually two.
+ *
+ * ⚠ **Plain CSS, with no `@tailwind`, `@layer` or `@apply`.** Those directives only resolve when
+ * a file is part of a consumer's Tailwind entry, and this one is imported as its own module — so
+ * the first version threw `'@layer base' is used but no matching '@tailwind base' directive is
+ * present` the moment it was rendered. A foundation stylesheet whose correctness depends on *how*
+ * an app happens to import it is what breaks in one panel out of six, so it depends on nothing.
+ * `scripts/verify-package.mjs` fails the build if a directive reappears.
+ *
+ * Element selectors only, so every Tailwind utility still wins on specificity.
+ */
+
+/* Self-hosted, never a Google Fonts link: a CDN font is a third-party request on every page
+ * load, it fails with the laptop offline, and it is a question we would rather not answer for an
+ * EU customer. These resolve from the kit's own dependencies, so one install fixes every panel. */
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/inter-tight/wght.css';
+@import '@fontsource/noto-sans-georgian/400.css';
+@import '@fontsource/noto-sans-georgian/500.css';
+@import '@fontsource/noto-sans-georgian/600.css';
+@import '@fontsource/noto-sans-georgian/700.css';
+
+:root {
+    /* ---- Neutrals -------------------------------------------------------------------
+         * Cool and very slightly blue-shifted, and deliberately **not** Tailwind's `slate`:
+         * that ramp is the most recognisable palette on the web, and a product wearing it
+         * reads as generated before a single word is read. */
+    --color-canvas: 247 248 251;
+    --color-surface: 255 255 255;
+    --color-raised: 241 243 248;
+    /* A well *below* the surface — table headers, grouped fields, code. Distinct from
+         * `raised`, which is a hover or a chip sitting on top of it. */
+    --color-sunken: 237 239 245;
+    --color-line: 228 231 239;
+    /* For a divider that has to be seen rather than felt, and for an input border on hover.
+         * Reaching for `ink/20` instead is how six panels end up with six divider weights. */
+    --color-line-strong: 207 212 226;
+
+    /* ---- Text -----------------------------------------------------------------------
+         * Three genuine levels. `ink` for content, `ink-soft` for a secondary heading or a
+         * strong run inside a paragraph, `muted` for supporting copy, `faint` for metadata
+         * only. Every one of the first three clears 4.5:1 on `surface`. */
+    --color-ink: 17 23 41;
+    --color-ink-soft: 58 66 87;
+    --color-muted: 92 101 121;
+    --color-faint: 138 146 166;
+
+    /* ---- Brand ----------------------------------------------------------------------
+         * The navy is unchanged: it is the mark's colour and the standard reserves it for
+         * primary actions and selection. */
+    --color-accent: 27 45 114;
+    --color-accent-hover: 20 35 92;
+    --color-accent-ink: 255 255 255;
+    /* The selected-row and hover wash. A navy at 10% alpha goes grey; a mixed tint stays
+         * blue, which is what makes a selected row read as selected. */
+    --color-accent-soft: 238 241 250;
+    --color-accent-line: 199 207 232;
+    /* A lighter navy for links and small accent text. The brand navy at 14px on white is
+         * visually near-black, so a link styled with it does not look like a link. */
+    --color-link: 42 70 168;
+
+    /* ---- Status ---------------------------------------------------------------------
+         * Each deepened enough to carry 14px text on its own subtle background, and `info` is
+         * now a real blue rather than a second copy of the accent — which is what made an
+         * info badge and an accent badge the same badge. */
+    --color-positive: 21 122 75;
+    --color-positive-soft: 227 245 234;
+    --color-caution: 154 100 18;
+    --color-caution-soft: 251 241 220;
+    --color-critical: 190 44 60;
+    --color-critical-soft: 251 233 235;
+    --color-info: 31 111 168;
+    --color-info-soft: 229 241 250;
+
+    /* ---- Elevation ------------------------------------------------------------------
+         * Two layers each — a tight contact shadow plus a wide soft one — and tinted with the
+         * ink rather than pure black, which is the difference between a card sitting on the
+         * page and a card with a grey smudge under it. */
+    --shadow-e1: 0 1px 2px -1px rgb(17 23 41 / 0.08), 0 1px 1px rgb(17 23 41 / 0.04);
+    --shadow-e2: 0 1px 2px rgb(17 23 41 / 0.04), 0 4px 12px -2px rgb(17 23 41 / 0.08);
+    --shadow-e3: 0 2px 4px rgb(17 23 41 / 0.04), 0 12px 28px -6px rgb(17 23 41 / 0.12);
+    --shadow-e4: 0 4px 8px rgb(17 23 41 / 0.04), 0 24px 56px -12px rgb(17 23 41 / 0.18);
+
+    /* ---- Motion ---------------------------------------------------------------------
+         * A decelerating curve, so a thing arrives rather than coasting to a stop. One scale,
+         * because a 150ms hover beside a 300ms hover is what makes an interface feel loose. */
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --duration-instant: 120ms;
+    --duration-fast: 180ms;
+    --duration-base: 260ms;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+body {
+    /* No `font-family` here: Tailwind's preflight already sets it from the preset's
+     * `fontFamily.sans`, and a second copy is a second thing to keep in step. */
+    margin: 0;
+    background-color: rgb(var(--color-canvas));
+    color: rgb(var(--color-ink));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    line-height: 1.5;
+    /* Inter's defaults leave figures proportional and `l`/`1` hard to tell apart in an id
+     * column. `cv05` straightens the `l`, `ss03` gives a single-storey `a` in headings. */
+    font-feature-settings: 'cv05' 1;
+    text-rendering: optimizeLegibility;
+}
+
+/* A number in a column has to line up with the number above it. Without this, a table of
+ * amounts is ragged and reads as a list of strings rather than figures. */
+.tabular,
+table td,
+table th,
+time,
+code,
+kbd,
+samp {
+    font-variant-numeric: tabular-nums;
+}
+
+::selection {
+    background-color: rgb(var(--color-accent) / 0.16);
+    color: rgb(var(--color-ink));
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+    background-color: rgb(var(--color-faint) / 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--color-muted) / 0.65);
+}
+
+/* The last-resort indicator for anything the kit's own `FOCUS_RING` does not reach. */
+:focus-visible {
+    outline: 2px solid rgb(var(--color-accent));
+    outline-offset: 2px;
+}
+
+main section > div {
+    min-width: 0;
+    overflow-x: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

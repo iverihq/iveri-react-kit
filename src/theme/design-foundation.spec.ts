@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import preset from '../../tailwind-preset.js';
+import preset from '../../tailwind-preset.cjs';
 
 /**
  * The foundation's two halves have to agree, and nothing else checks that they do.

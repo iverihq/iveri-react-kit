@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss';
 
-import preset from '../tailwind-preset.js';
+import preset from '../tailwind-preset.cjs';
 
 /**
  * The gallery consumes the preset exactly as an app does, so a token this file cannot resolve is

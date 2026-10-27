@@ -1,6 +1,14 @@
 /**
  * The shared Tailwind theme every Iveri panel extends.
  *
+ * ⚠ **CommonJS, deliberately.** Tailwind loads a consumer's `tailwind.config.ts` through `jiti`,
+ * which resolves imports with the **CJS** loader — and that loader honours only the `node` and
+ * `require` export conditions. Published as ESM, this subpath failed in every panel with
+ * `Package subpath './tailwind-preset' is not defined by "exports"`, which names the one thing
+ * that was not wrong: the subpath is defined, just not for the loader asking. A `.cjs` file is
+ * consumable by `require` and by `import` alike, so it is one file rather than a dual build that
+ * could drift.
+ *
  * Each app used to declare the same forty lines of colour mapping itself, so a token added to
  * the kit reached a panel only when somebody remembered to edit that panel too — and the four
  * variants this replaced are the evidence that nobody did.
@@ -124,4 +132,4 @@ const preset = {
     },
 };
 
-export default preset;
+module.exports = preset;

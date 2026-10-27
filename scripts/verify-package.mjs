@@ -50,8 +50,29 @@ for (const path of new Set(publishedPaths(manifest.exports))) {
     }
 }
 
+/**
+ * A subpath offering a `require` condition has to be reachable by the **CJS** loader.
+ *
+ * This is not hypothetical and the guard above did not catch it: `./tailwind-preset` shipped as
+ * ESM with only an `import` condition, and Tailwind loads a consumer's config through `jiti`,
+ * which resolves with `require`. Every panel failed with `Package subpath './tailwind-preset' is
+ * not defined by "exports"` — a message naming the one thing that was not wrong. Importing the
+ * file here proved nothing, because this script is ESM and took the condition that worked.
+ */
+for (const [subpath, target] of Object.entries(manifest.exports)) {
+    if (typeof target !== 'object' || target === null || target.require === undefined) continue;
+
+    try {
+        createRequire(import.meta.url)(resolve(target.require));
+    } catch (error) {
+        failures.push(
+            `exports "${subpath}" offers a require condition that CJS cannot load: ${error instanceof Error ? error.message : error}`,
+        );
+    }
+}
+
 /** The JavaScript entry points have to load under Node, not only under a bundler. */
-for (const entry of ['dist/index.js', 'tailwind-preset.js']) {
+for (const entry of ['dist/index.js', 'tailwind-preset.cjs']) {
     try {
         const loaded = await import(pathToFileURL(resolve(entry)).href);
         const exported = Object.keys(loaded);

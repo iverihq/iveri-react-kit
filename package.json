@@ -1,6 +1,6 @@
 {
   "name": "@iveri/react-kit",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Shared React UI primitives for Iveri admin apps.",
   "license": "MIT",
   "repository": {
@@ -20,8 +20,10 @@
     },
     "./styles.css": "./styles/tokens.css",
     "./tailwind-preset": {
-      "types": "./tailwind-preset.d.ts",
-      "import": "./tailwind-preset.js"
+      "types": "./tailwind-preset.d.cts",
+      "require": "./tailwind-preset.cjs",
+      "import": "./tailwind-preset.cjs",
+      "default": "./tailwind-preset.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -29,8 +31,8 @@
   "files": [
     "dist",
     "styles",
-    "tailwind-preset.js",
-    "tailwind-preset.d.ts",
+    "tailwind-preset.cjs",
+    "tailwind-preset.d.cts",
     "README.md"
   ],
   "scripts": {
@@ -86,7 +88,7 @@
   "typesVersions": {
     "*": {
       "tailwind-preset": [
-        "./tailwind-preset.d.ts"
+        "./tailwind-preset.d.cts"
       ]
     }
   }

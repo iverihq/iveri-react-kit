@@ -20,7 +20,7 @@ Two lines of config and one import. The stylesheet has to come before the app's 
 it declares the custom properties the Tailwind theme resolves against.
 
 ```ts
-// tailwind.config.ts
+// tailwind.config.ts — the preset is CommonJS; see "Verifying a release" for why
 import preset from '@iveri/react-kit/tailwind-preset';
 
 export default {
@@ -117,10 +117,20 @@ Three rules the components encode, each with a spec:
 ## Verifying a release
 
 `pnpm build` runs `scripts/verify-package.mjs`, which loads every JavaScript entry point under
-**Node** rather than a bundler, checks each path in `exports` exists and is covered by `files`,
-and resolves every font the stylesheet imports. Two shipped defects had that shape — a directory
-import this package could not load outside Vite, and `@iveri/nest-sdk@0.22.0` being unloadable for
-ten of twelve services — and neither was visible to `tsc`.
+**Node** rather than a bundler, requires every subpath offering a `require` condition through the
+**CJS** loader as well, checks each path in `exports` exists and is covered by `files`, resolves
+every font the stylesheet imports, and refuses a Tailwind directive in the stylesheet.
+
+Three shipped defects had that shape and none was visible to `tsc`: a directory import this
+package could not load outside Vite, `@iveri/nest-sdk@0.22.0` being unloadable for ten of twelve
+services, and `./tailwind-preset` published as ESM in 0.5.0.
+
+⚠ **That last one is why the preset is a `.cjs` file.** Tailwind loads a consumer's
+`tailwind.config.ts` through `jiti`, which resolves with the CJS loader — and that loader honours
+only the `node` and `require` export conditions. Every panel failed with `Package subpath
+'./tailwind-preset' is not defined by "exports"`, a message naming the one thing that was not
+wrong. Its declaration is `tailwind-preset.d.cts` using `export =`, because TypeScript matches a
+declaration's extension to the implementation's and a `.d.ts` beside a `.cjs` is never found.
 
 ## i18n
 

@@ -155,10 +155,10 @@ export function Gallery(): JSX.Element {
                         so `shadow-${'{'}level{'}'}` generates nothing and every card renders flat. */}
                     {(
                         [
-                            ['e1', 'shadow-e1', 'resting card'],
-                            ['e2', 'shadow-e2', 'hover, raised'],
-                            ['e3', 'shadow-e3', 'popover, menu'],
-                            ['e4', 'shadow-e4', 'dialog'],
+                            ['sm', 'shadow-sm', 'resting card'],
+                            ['md', 'shadow-md', 'hover, raised'],
+                            ['lg', 'shadow-lg', 'popover, menu'],
+                            ['xl', 'shadow-xl', 'dialog'],
                         ] as const
                     ).map(([level, shadow, use]) => (
                         <div key={level} className={`rounded-panel border border-line bg-surface p-5 ${shadow}`}>

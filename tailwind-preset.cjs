@@ -88,16 +88,19 @@ const preset = {
                 h1: ['2rem', { lineHeight: '2.5rem', letterSpacing: '-0.022em' }],
                 display: ['2.5rem', { lineHeight: '3rem', letterSpacing: '-0.028em' }],
             },
+            // The standard's scale: 8px for inputs and compact elements, 12px for cards, 16px
+            // for large dialogs and sheets. Named for the thing rather than the size, so a
+            // component does not have to know which step it is on.
             borderRadius: {
                 control: '0.5rem',
-                card: '0.625rem',
-                panel: '0.875rem',
+                card: '0.75rem',
+                panel: '1rem',
             },
             boxShadow: {
-                e1: 'var(--shadow-e1)',
-                e2: 'var(--shadow-e2)',
-                e3: 'var(--shadow-e3)',
-                e4: 'var(--shadow-e4)',
+                sm: 'var(--shadow-sm)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
+                xl: 'var(--shadow-xl)',
                 // The hairline that stops a filled navy button looking like a flat rectangle.
                 inset: 'inset 0 1px 0 rgb(255 255 255 / 0.1)',
             },
@@ -105,10 +108,12 @@ const preset = {
                 standard: 'var(--ease-standard)',
                 'out-quint': 'var(--ease-out-quint)',
             },
+            // The standard's three steps, by its own names: 120ms for a small state change,
+            // 200ms for a standard transition, 320ms only for a panel or an overlay.
             transitionDuration: {
-                instant: 'var(--duration-instant)',
                 fast: 'var(--duration-fast)',
-                base: 'var(--duration-base)',
+                normal: 'var(--duration-normal)',
+                slow: 'var(--duration-slow)',
             },
             keyframes: {
                 'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
@@ -124,7 +129,7 @@ const preset = {
             },
             animation: {
                 'fade-in': 'fade-in var(--duration-fast) var(--ease-standard) both',
-                'rise-in': 'rise-in var(--duration-base) var(--ease-out-quint) both',
+                'rise-in': 'rise-in var(--duration-normal) var(--ease-out-quint) both',
                 'scale-in': 'scale-in var(--duration-fast) var(--ease-out-quint) both',
                 shimmer: 'shimmer 1.6s linear infinite',
             },

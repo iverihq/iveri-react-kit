@@ -71,7 +71,7 @@ export function TableRow({ children, isSelected = false, onClick, className }: R
             onClick={onClick}
             aria-selected={isSelected || undefined}
             className={cn(
-                'transition-colors duration-instant',
+                'transition-colors duration-fast',
                 // The wash is a mixed tint rather than the navy at low alpha, which goes grey
                 // and leaves a selected row looking merely hovered.
                 isSelected ? 'bg-accent-soft' : 'bg-surface',

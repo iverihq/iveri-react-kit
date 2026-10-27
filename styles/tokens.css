@@ -82,19 +82,21 @@
          * Two layers each — a tight contact shadow plus a wide soft one — and tinted with the
          * ink rather than pure black, which is the difference between a card sitting on the
          * page and a card with a grey smudge under it. */
-    --shadow-e1: 0 1px 2px -1px rgb(17 23 41 / 0.08), 0 1px 1px rgb(17 23 41 / 0.04);
-    --shadow-e2: 0 1px 2px rgb(17 23 41 / 0.04), 0 4px 12px -2px rgb(17 23 41 / 0.08);
-    --shadow-e3: 0 2px 4px rgb(17 23 41 / 0.04), 0 12px 28px -6px rgb(17 23 41 / 0.12);
-    --shadow-e4: 0 4px 8px rgb(17 23 41 / 0.04), 0 24px 56px -12px rgb(17 23 41 / 0.18);
+    --shadow-sm: 0 1px 2px -1px rgb(17 23 41 / 0.08), 0 1px 1px rgb(17 23 41 / 0.04);
+    --shadow-md: 0 1px 2px rgb(17 23 41 / 0.04), 0 4px 12px -2px rgb(17 23 41 / 0.08);
+    --shadow-lg: 0 2px 4px rgb(17 23 41 / 0.04), 0 12px 28px -6px rgb(17 23 41 / 0.12);
+    --shadow-xl: 0 4px 8px rgb(17 23 41 / 0.04), 0 24px 56px -12px rgb(17 23 41 / 0.18);
 
     /* ---- Motion ---------------------------------------------------------------------
-         * A decelerating curve, so a thing arrives rather than coasting to a stop. One scale,
-         * because a 150ms hover beside a 300ms hover is what makes an interface feel loose. */
+         * A decelerating curve, so a thing arrives rather than coasting to a stop. The three
+         * steps and their names are the design standard's — 120ms for a small state change,
+         * 200ms for a standard transition, 320ms only for a panel or an overlay — because a
+         * number invented here that the standard already specifies is drift by another name. */
     --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-    --duration-instant: 120ms;
-    --duration-fast: 180ms;
-    --duration-base: 260ms;
+    --duration-fast: 120ms;
+    --duration-normal: 200ms;
+    --duration-slow: 320ms;
 }
 
 html,

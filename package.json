@@ -1,6 +1,6 @@
 {
   "name": "@iveri/react-kit",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "Shared React UI primitives for Iveri admin apps.",
   "license": "MIT",
   "repository": {
@@ -18,25 +18,37 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./styles.css": "./styles/tokens.css",
+    "./tailwind-preset": {
+      "types": "./tailwind-preset.d.ts",
+      "import": "./tailwind-preset.js"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "files": [
     "dist",
+    "styles",
+    "tailwind-preset.js",
+    "tailwind-preset.d.ts",
     "README.md"
   ],
   "scripts": {
     "clean": "rimraf dist tsconfig.build.tsbuildinfo",
-    "build": "pnpm clean && tsc -p tsconfig.build.json && node scripts/verify-esm.mjs",
+    "build": "pnpm clean && tsc -p tsconfig.build.json && node scripts/verify-package.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "preview": "vite --config preview/vite.config.ts"
   },
   "prettier": "@iveri/prettier-config",
   "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource/noto-sans-georgian": "^5.3.0",
     "intl-messageformat": "^10.7.16"
   },
   "peerDependencies": {
@@ -50,20 +62,32 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
     "eslint": "^9.18.0",
     "jsdom": "^25.0.1",
+    "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
+    "vite": "^6.0.7",
     "vitest": "^3.2.7"
   },
   "engines": {
     "node": ">=22"
   },
-  "packageManager": "pnpm@9.12.0"
+  "packageManager": "pnpm@9.12.0",
+  "typesVersions": {
+    "*": {
+      "tailwind-preset": [
+        "./tailwind-preset.d.ts"
+      ]
+    }
+  }
 }

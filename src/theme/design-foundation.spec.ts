@@ -91,6 +91,26 @@ describe('design foundation', () => {
         }
     });
 
+    it("uses the design standard's own radii and motion scale", () => {
+        // These values are `design-system/tokens.json`'s, by its own names. They are pinned
+        // because the first version of this preset invented 10px, 14px, 180ms and 260ms where
+        // the standard already said 12px, 16px, 200ms and 320ms — a declaration disagreeing
+        // with the thing it describes, which is the defect this whole foundation exists to fix.
+        //
+        // It cannot read that file: the standard lives outside any package and is not published,
+        // so this is a copy and a change here has to be made in both places deliberately.
+        const radii = preset.theme!.extend!.borderRadius as Record<string, string>;
+        const durations = preset.theme!.extend!.transitionDuration as Record<string, string>;
+
+        expect(radii).toEqual({ control: '0.5rem', card: '0.75rem', panel: '1rem' });
+        expect(Object.keys(durations)).toEqual(['fast', 'normal', 'slow']);
+        expect(tokensCss).toContain('--duration-fast: 120ms');
+        expect(tokensCss).toContain('--duration-normal: 200ms');
+        expect(tokensCss).toContain('--duration-slow: 320ms');
+        // The standard's easing, verbatim.
+        expect(tokensCss).toContain('--ease-standard: cubic-bezier(0.2, 0, 0, 1)');
+    });
+
     it('asks every panel for the same type scale, including the display cut', () => {
         const fonts = preset.theme!.extend!.fontFamily as Record<string, string[]>;
         const sizes = preset.theme!.extend!.fontSize as Record<string, unknown>;

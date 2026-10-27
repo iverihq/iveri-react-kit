@@ -58,7 +58,7 @@ export function SegmentedControl<TValue extends string>({
                             // alone would be the one thing the standard forbids, and on a track
                             // this small a tint is easy to miss.
                             isSelected
-                                ? 'bg-surface text-ink shadow-e1'
+                                ? 'bg-surface text-ink shadow-sm'
                                 : 'text-muted hover:bg-raised hover:text-ink-soft',
                             'focus-within:outline-none',
                             FOCUS_RING.replaceAll('focus-visible:', 'has-[:focus-visible]:'),

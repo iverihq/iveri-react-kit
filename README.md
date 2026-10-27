@@ -79,9 +79,16 @@ deliberate.
 
 `design.md` forbids gradient backgrounds, glass cards, hero type in product screens and heavy
 animation, and this foundation honours all of it. What it spends instead: real loaded type with
-optical tracking at display sizes, a two-layer ink-tinted elevation scale, a genuine three-level
+optical tracking at display sizes, a two-layer ink-tinted elevation scale, a genuine four-level
 text hierarchy, tabular figures in every data column, and one motion scale so a 150ms hover never
 sits beside a 300ms one.
+
+**The radii, the elevation names and the motion scale are the standard's own**, by its own names
+— `design-system/tokens.json`. The first version of this preset invented 10px, 14px, 180ms and
+260ms where the standard already said 12px, 16px, 200ms and 320ms, which is a declaration
+disagreeing with the thing it describes: the exact defect the rest of this foundation exists to
+fix. A spec pins them, and says it cannot read that file, so a change has to be made in both
+places deliberately.
 
 The one gradient in the system is `Skeleton`'s sweep, which is a loading affordance rather than
 decoration — and a sweep is used rather than a pulse because a pulsing block and a disabled block

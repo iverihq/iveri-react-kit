@@ -45,8 +45,8 @@ export function StatCard({ label, value, hint, icon, delta, className }: Readonl
     return (
         <div
             className={cn(
-                'flex flex-col gap-3 rounded-card border border-line bg-surface p-4 shadow-e1',
-                'transition-shadow duration-fast ease-standard hover:shadow-e2',
+                'flex flex-col gap-3 rounded-card border border-line bg-surface p-4 shadow-sm',
+                'transition-shadow duration-fast ease-standard hover:shadow-md',
                 className,
             )}
         >

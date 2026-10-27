@@ -11,13 +11,13 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
     // `shadow-inset` is the hairline along the top edge. Without it a filled navy button is a
     // flat rectangle; with it the surface has a direction, which is what reads as a button.
     primary: cn(
-        'bg-accent text-accent-ink shadow-e1 shadow-inset',
-        'hover:bg-accent-hover hover:shadow-e2',
+        'bg-accent text-accent-ink shadow-sm shadow-inset',
+        'hover:bg-accent-hover hover:shadow-md',
         'disabled:bg-accent/40 disabled:shadow-none',
     ),
     secondary: cn(
-        'border border-line bg-surface text-ink shadow-e1',
-        'hover:border-line-strong hover:bg-raised hover:shadow-e2',
+        'border border-line bg-surface text-ink shadow-sm',
+        'hover:border-line-strong hover:bg-raised hover:shadow-md',
     ),
     ghost: 'text-muted hover:bg-raised hover:text-ink',
     danger: cn(
@@ -25,8 +25,8 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
         'hover:border-critical/40 hover:bg-critical/15',
     ),
     'danger-solid': cn(
-        'bg-critical text-white shadow-e1 shadow-inset',
-        'hover:brightness-95 hover:shadow-e2',
+        'bg-critical text-white shadow-sm shadow-inset',
+        'hover:brightness-95 hover:shadow-md',
         'disabled:bg-critical/40 disabled:shadow-none',
     ),
     // A link that is a button. Underlined on hover rather than always, so a row of them does

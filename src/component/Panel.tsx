@@ -16,7 +16,7 @@ interface PanelProps {
 /**
  * The card every panel's content sits in.
  *
- * `shadow-e1` and a `line` border together, which looks redundant and is not: the border holds
+ * `shadow-sm` and a `line` border together, which looks redundant and is not: the border holds
  * the edge where the surface and the canvas are both nearly white, and the shadow is what
  * separates the layers. Dropping either leaves a card that floats without an edge, or an edge
  * that does not lift.
@@ -33,7 +33,7 @@ export function Panel({
     const hasHeader = title !== undefined || actions !== undefined;
 
     return (
-        <section className={cn('overflow-hidden rounded-panel border border-line bg-surface shadow-e1', className)}>
+        <section className={cn('overflow-hidden rounded-panel border border-line bg-surface shadow-sm', className)}>
             {hasHeader && (
                 <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-4">
                     <div className="flex min-w-0 flex-col gap-1">

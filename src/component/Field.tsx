@@ -5,12 +5,19 @@ import { cn } from '../common/index.js';
 
 import { FOCUS_RING } from './Button.js';
 
-const CONTROL_CLASS =
-    'min-h-11 w-full rounded-md border bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint ' +
-    'transition-colors duration-150 focus:border-accent disabled:cursor-not-allowed disabled:bg-raised disabled:opacity-70 ' +
+const CONTROL_CLASS = cn(
+    'min-h-10 w-full rounded-control border bg-surface px-3 py-2 text-body text-ink placeholder:text-faint',
+    'shadow-[inset_0_1px_2px_rgb(17_23_41_/_0.04)]',
+    'transition-[border-color,box-shadow] duration-fast ease-standard',
+    // A hover that darkens the border is what tells somebody the field is editable before they
+    // click it. Without it an input and a read-only value box look the same.
+    'hover:border-line-strong',
+    'focus:border-accent',
+    'disabled:cursor-not-allowed disabled:border-line disabled:bg-raised disabled:opacity-70 disabled:shadow-none',
     // The border colour alone was the whole focus indication, which is the one thing the design
     // standard forbids: colour carrying meaning by itself.
-    FOCUS_RING;
+    FOCUS_RING,
+);
 
 interface FieldShellProps {
     label: string;
@@ -26,18 +33,26 @@ export function Field({ label, hint, error, children }: Readonly<FieldShellProps
     const hasDescription = hasError || hint !== undefined;
 
     return (
-        <div className="flex flex-col gap-2">
-            <label htmlFor={controlId} className="text-sm font-medium text-ink">
+        <div className="flex flex-col gap-1.5">
+            <label htmlFor={controlId} className="text-label font-medium text-ink-soft">
                 {label}
             </label>
             {children(controlId, hasError, hasDescription ? descriptionId : undefined)}
             {hasError ? (
-                <p id={descriptionId} className="text-sm text-critical" role="alert">
-                    {error}
+                <p id={descriptionId} className="flex items-start gap-1.5 text-small text-critical" role="alert">
+                    <svg
+                        viewBox="0 0 16 16"
+                        className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm0 3.25a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0V5a.75.75 0 0 1 .75-.75ZM8 10.5a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z" />
+                    </svg>
+                    <span>{error}</span>
                 </p>
             ) : (
                 hint !== undefined && (
-                    <p id={descriptionId} className="text-sm leading-6 text-muted">
+                    <p id={descriptionId} className="text-small text-muted">
                         {hint}
                     </p>
                 )
@@ -160,13 +175,17 @@ export function CheckboxField({ label, hint, checked, onChange, disabled }: Read
                 onChange={(event) => {
                     onChange(event.target.checked);
                 }}
-                className={cn('mt-0.5 h-5 w-5 rounded border-line bg-surface text-accent', FOCUS_RING)}
+                className={cn(
+                    'mt-0.5 h-[18px] w-[18px] shrink-0 cursor-pointer rounded border-line bg-surface text-accent',
+                    'transition-colors duration-fast disabled:cursor-not-allowed disabled:opacity-60',
+                    FOCUS_RING,
+                )}
             />
             <div className="flex flex-col gap-1">
-                <label htmlFor={controlId} className="text-sm font-medium text-ink">
+                <label htmlFor={controlId} className="cursor-pointer text-label font-medium text-ink">
                     {label}
                 </label>
-                {hint !== undefined && <p className="text-sm leading-6 text-muted">{hint}</p>}
+                {hint !== undefined && <p className="text-small text-muted">{hint}</p>}
             </div>
         </div>
     );

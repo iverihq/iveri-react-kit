@@ -91,6 +91,18 @@ describe('design foundation', () => {
         }
     });
 
+    it('tells a browser the products are light-only', () => {
+        // Without this a native control — a checkbox, a radio, a select's dropdown list, a date
+        // picker, the caret — is painted in the *operating system's* palette, so a machine in
+        // dark mode renders dark controls on an entirely light page. A bare checkbox came out as
+        // a filled black square in three panels. It is invisible to anyone working in light
+        // mode, which is why it shipped.
+        expect(tokensCss).toMatch(/^\s*color-scheme:\s*light;/mu);
+        // `light dark` would leave the controls dark and the page light, since there is no dark
+        // theme to switch to.
+        expect(tokensCss).not.toContain('color-scheme: light dark');
+    });
+
     it("uses the design standard's own radii and motion scale", () => {
         // These values are `design-system/tokens.json`'s, by its own names. They are pinned
         // because the first version of this preset invented 10px, 14px, 180ms and 260ms where

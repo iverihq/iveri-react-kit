@@ -27,6 +27,23 @@
 @import '@fontsource/noto-sans-georgian/700.css';
 
 :root {
+    /**
+     * ⚠ The products are light-only, and a native control has to be told.
+     *
+     * Without this a browser paints every control the page does not draw itself — a checkbox, a
+     * radio, a `<select>`'s dropdown list, a date picker, the caret, the autofill wash — in the
+     * **operating system's** palette. On a machine in dark mode that is a dark control on an
+     * entirely light page: a bare checkbox renders as a filled black square.
+     *
+     * It is invisible to anyone working in light mode, which is why it shipped in all six panels.
+     * The kit's own `CheckboxField` escaped it only by accident, because `bg-surface` happens to
+     * paint over the UA's background.
+     *
+     * `light`, not `light dark`: there is no dark theme, so offering one leaves the controls dark
+     * and the page light. This is the line to revisit first when a dark theme is built.
+     */
+    color-scheme: light;
+
     /* ---- Neutrals -------------------------------------------------------------------
          * Cool and very slightly blue-shifted, and deliberately **not** Tailwind's `slate`:
          * that ramp is the most recognisable palette on the web, and a product wearing it

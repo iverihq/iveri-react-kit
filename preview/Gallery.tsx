@@ -263,6 +263,20 @@ export function Gallery(): JSX.Element {
                             checked={isSubscribed}
                             onChange={setIsSubscribed}
                         />
+                        <div className="flex flex-col gap-2 border-t border-line pt-4 sm:col-span-2">
+                            {/* Deliberately unstyled, because the base layer is what has to hold
+                                here. Without `color-scheme: light` a browser paints every control
+                                the page does not draw itself in the *operating system's* palette,
+                                so on a machine in dark mode this renders as a filled black square
+                                on a white card. Three panels have a checkbox exactly like it. */}
+                            <label className="flex items-center gap-2 text-label text-ink">
+                                <input type="checkbox" defaultChecked />A native control the kit does not style
+                            </label>
+                            <p className="text-caption text-muted">
+                                Unstyled on purpose: it proves the base layer reaches controls the components do not
+                                draw.
+                            </p>
+                        </div>
                     </div>
                 </Panel>
             </Section>

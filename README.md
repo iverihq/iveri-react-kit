@@ -98,6 +98,14 @@ look alike.
 across six panels nobody has reviewed in dark is how a product ships broken. It wants a pass of its
 own.
 
+⚠ **Which is why `:root` declares `color-scheme: light`.** A browser paints every control the page
+does not draw itself — a checkbox, a radio, a `<select>`'s dropdown list, a date picker, the caret,
+the autofill wash — in the **operating system's** palette unless told otherwise. On a machine in
+dark mode that is a dark control on an entirely light page, and a bare checkbox renders as a filled
+black square. All six panels had it, in three of them on a visible control; it is invisible to
+anyone working in light mode, which is why it shipped. The gallery carries a deliberately unstyled
+checkbox so the base layer is proved rather than assumed.
+
 ## Components
 
 ```text

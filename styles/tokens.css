@@ -6,6 +6,13 @@
  * accent, and all six with `--color-faint` set to the same value as `--color-muted`, so the
  * three-level text hierarchy the standard describes was actually two.
  *
+ * ⚠ **The values are `@iveri/tokens`', and `design-foundation.spec.ts` asserts every one of them
+ * matches.** They are written out here rather than generated because this file is mostly
+ * reasoning — `color-scheme`, the font imports, the scrollbar, `::selection`, reduced motion —
+ * and a generator would have to template all of it to keep eight comments. The spec is what the
+ * three hand-maintained copies never had: each of them carried one, and each said in its own
+ * comment that it could not see drift against the others.
+ *
  * ⚠ **Plain CSS, with no `@tailwind`, `@layer` or `@apply`.** Those directives only resolve when
  * a file is part of a consumer's Tailwind entry, and this one is imported as its own module — so
  * the first version threw `'@layer base' is used but no matching '@tailwind base' directive is
@@ -94,6 +101,24 @@
     --color-critical-soft: 251 233 235;
     --color-info: 31 111 168;
     --color-info-soft: 229 241 250;
+
+    /* ---- Product voice ---------------------------------------------------------------
+         * The navy hero panel and the warm accent that goes on it. **A product, not a panel:**
+         * Taxi, Delivery and the shop open on a navy card with a gold rule; an admin console
+         * does not, and these exist so the two product apps stop writing the same eight hex
+         * literals inline — twenty-five occurrences across the two of them, including a hero
+         * navy three parts in 255 from the one the palette already had. */
+    --color-hero: 20 35 92;
+    --color-hero-ink: 255 255 255;
+    /* An error on a hero card, where `critical` is unreadable. */
+    --color-hero-critical: 255 210 218;
+    --color-gold: 246 199 109;
+    --color-gold-hover: 255 218 145;
+    /* The rule beside a page heading, and a route marker's ring. */
+    --color-gold-line: 227 173 80;
+    --color-gold-soft: 255 242 214;
+    /* Text on `gold` and on `gold-soft`. */
+    --color-gold-ink: 141 92 22;
 
     /* ---- Elevation ------------------------------------------------------------------
          * Two layers each — a tight contact shadow plus a wide soft one — and tinted with the

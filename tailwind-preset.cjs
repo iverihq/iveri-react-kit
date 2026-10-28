@@ -17,37 +17,31 @@
  * literals, which is what keeps `bg-surface/50` and `text-accent/70` working: Tailwind needs
  * the channel triplet to substitute `<alpha-value>` into.
  *
+ * **The names come from `@iveri/tokens`**, so a token added there becomes a utility here with no
+ * edit at all — and `design-foundation.spec.ts` then fails until `styles/tokens.css` declares its
+ * value. The two halves of a token can no longer be added one at a time, which is how
+ * `--color-faint` came to be declared as a third text level while carrying the second's value.
+ *
  * @type {import('tailwindcss').Config}
  */
+const { color, productColor, duration, radius } = require('@iveri/tokens');
+
+/** `lineStrong` → `line-strong`, the spelling both a CSS property and a utility class want. */
+const kebab = (name) => name.replace(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`);
+
+const colors = Object.fromEntries(
+    Object.keys({ ...color, ...productColor }).map((name) => [
+        kebab(name),
+        `rgb(var(--color-${kebab(name)}) / <alpha-value>)`,
+    ]),
+);
+
+const borderRadius = Object.fromEntries(Object.entries(radius).map(([name, pixels]) => [name, `${pixels / 16}rem`]));
+
 const preset = {
     theme: {
         extend: {
-            colors: {
-                canvas: 'rgb(var(--color-canvas) / <alpha-value>)',
-                surface: 'rgb(var(--color-surface) / <alpha-value>)',
-                raised: 'rgb(var(--color-raised) / <alpha-value>)',
-                sunken: 'rgb(var(--color-sunken) / <alpha-value>)',
-                line: 'rgb(var(--color-line) / <alpha-value>)',
-                'line-strong': 'rgb(var(--color-line-strong) / <alpha-value>)',
-                ink: 'rgb(var(--color-ink) / <alpha-value>)',
-                'ink-soft': 'rgb(var(--color-ink-soft) / <alpha-value>)',
-                muted: 'rgb(var(--color-muted) / <alpha-value>)',
-                faint: 'rgb(var(--color-faint) / <alpha-value>)',
-                accent: 'rgb(var(--color-accent) / <alpha-value>)',
-                'accent-hover': 'rgb(var(--color-accent-hover) / <alpha-value>)',
-                'accent-ink': 'rgb(var(--color-accent-ink) / <alpha-value>)',
-                'accent-soft': 'rgb(var(--color-accent-soft) / <alpha-value>)',
-                'accent-line': 'rgb(var(--color-accent-line) / <alpha-value>)',
-                link: 'rgb(var(--color-link) / <alpha-value>)',
-                positive: 'rgb(var(--color-positive) / <alpha-value>)',
-                'positive-soft': 'rgb(var(--color-positive-soft) / <alpha-value>)',
-                caution: 'rgb(var(--color-caution) / <alpha-value>)',
-                'caution-soft': 'rgb(var(--color-caution-soft) / <alpha-value>)',
-                critical: 'rgb(var(--color-critical) / <alpha-value>)',
-                'critical-soft': 'rgb(var(--color-critical-soft) / <alpha-value>)',
-                info: 'rgb(var(--color-info) / <alpha-value>)',
-                'info-soft': 'rgb(var(--color-info-soft) / <alpha-value>)',
-            },
+            colors,
             fontFamily: {
                 // A browser substitutes per glyph, so Latin renders in Inter and Georgian falls
                 // through to Noto — which is the whole reason that second family is here. Inter
@@ -88,14 +82,10 @@ const preset = {
                 h1: ['2rem', { lineHeight: '2.5rem', letterSpacing: '-0.022em' }],
                 display: ['2.5rem', { lineHeight: '3rem', letterSpacing: '-0.028em' }],
             },
-            // The standard's scale: 8px for inputs and compact elements, 12px for cards, 16px
-            // for large dialogs and sheets. Named for the thing rather than the size, so a
-            // component does not have to know which step it is on.
-            borderRadius: {
-                control: '0.5rem',
-                card: '0.75rem',
-                panel: '1rem',
-            },
+            // The standard's scale, from `@iveri/tokens` in pixels: 8 for inputs and compact
+            // elements, 12 for cards, 16 for large dialogs and sheets. Named for the thing
+            // rather than the size, so a component does not have to know which step it is on.
+            borderRadius,
             boxShadow: {
                 sm: 'var(--shadow-sm)',
                 md: 'var(--shadow-md)',
@@ -109,12 +99,12 @@ const preset = {
                 'out-quint': 'var(--ease-out-quint)',
             },
             // The standard's three steps, by its own names: 120ms for a small state change,
-            // 200ms for a standard transition, 320ms only for a panel or an overlay.
-            transitionDuration: {
-                fast: 'var(--duration-fast)',
-                normal: 'var(--duration-normal)',
-                slow: 'var(--duration-slow)',
-            },
+            // 200ms for a standard transition, 320ms only for a panel or an overlay. The names
+            // come from `@iveri/tokens`; the values stay behind custom properties so a consumer
+            // can read one in hand-written CSS.
+            transitionDuration: Object.fromEntries(
+                Object.keys(duration).map((name) => [name, `var(--duration-${name})`]),
+            ),
             keyframes: {
                 'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
                 'rise-in': {

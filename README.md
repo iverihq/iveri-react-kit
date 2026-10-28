@@ -75,6 +75,29 @@ to `tsc` — a utility class for an undeclared colour compiles to `rgb(var(--col
 the browser drops, leaving the inherited colour, and inherited is usually close enough to look
 deliberate.
 
+**The values come from `@iveri/tokens`**, which is also what the two Expo apps read. Those apps
+used to hold a hand-maintained copy of this palette — three copies in all, each with a spec, and
+each spec saying in its own comment that it could not see drift against the others. The spec here
+now compares every declared `--color-*` against `toRgbChannels(color[name])`, and the **preset
+derives its colour names from the package**, so a token added there becomes a utility with no
+edit here and the spec then fails until `styles/tokens.css` declares its value. The two halves of
+a token can no longer be added one at a time.
+
+`styles/tokens.css` stays hand-written rather than generated: it is mostly reasoning —
+`color-scheme`, the font imports, the scrollbar, `::selection`, reduced motion — and a generator
+would have to template all of it to keep eight comments.
+
+### The product voice is eight more tokens
+
+`hero`, `hero-ink`, `hero-critical`, `gold`, `gold-hover`, `gold-line`, `gold-soft`, `gold-ink`.
+Taxi, Delivery and the shop open on a navy card with a gold rule; an admin console does not, which
+is why they are a separate export in `@iveri/tokens` and why no panel should reach for them.
+
+`taxi-web` and `delivery-web` wrote all eight as inline hex — twenty-five occurrences between
+them, including a hero navy **three parts in 255** from the deep navy the palette already had and
+a **one-part** near-miss of `accent-soft` used for the selected navigation item, while all four
+admin panels had moved onto the real token.
+
 ### Beauty here is craft, not decoration
 
 `design.md` forbids gradient backgrounds, glass cards, hero type in product screens and heavy

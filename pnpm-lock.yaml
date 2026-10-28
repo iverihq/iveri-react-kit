@@ -17,6 +17,9 @@ importers:
       '@fontsource/noto-sans-georgian':
         specifier: ^5.3.0
         version: 5.3.0
+      '@iveri/tokens':
+        specifier: ^0.1.0
+        version: 0.1.0
       intl-messageformat:
         specifier: ^10.7.16
         version: 10.7.18
@@ -462,6 +465,10 @@ packages:
     engines: {node: '>=22'}
     peerDependencies:
       prettier: '>=3'
+
+  '@iveri/tokens@0.1.0':
+    resolution: {integrity: sha512-cJHCdxQ4U1fA3NgQ/EHNV8I5N2L60lhaUNE1uYWf6bPaPCLDU8qdgoNjeq4chYCXNSRDHHd6IibTwr63MFSTVQ==}
+    engines: {node: '>=22'}
 
   '@iveri/tsconfig@0.1.0':
     resolution: {integrity: sha512-zPsxKoLRQGF0S77WAwqRrY6pEcWtu5UDFTJ0WwprtEcgJzXVbJ91Z6GNvvvCkTRq26372nUHytOjgjDvIJn0qg==}
@@ -2686,6 +2693,8 @@ snapshots:
   '@iveri/prettier-config@0.1.0(prettier@3.9.6)':
     dependencies:
       prettier: 3.9.6
+
+  '@iveri/tokens@0.1.0': {}
 
   '@iveri/tsconfig@0.1.0': {}
 

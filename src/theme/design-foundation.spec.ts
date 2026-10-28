@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 
+import { color, duration, easing, productColor, radius, toRgbChannels } from '@iveri/tokens';
 import { describe, expect, it } from 'vitest';
 
 import preset from '../../tailwind-preset.cjs';
@@ -103,26 +104,6 @@ describe('design foundation', () => {
         expect(tokensCss).not.toContain('color-scheme: light dark');
     });
 
-    it("uses the design standard's own radii and motion scale", () => {
-        // These values are `design-system/tokens.json`'s, by its own names. They are pinned
-        // because the first version of this preset invented 10px, 14px, 180ms and 260ms where
-        // the standard already said 12px, 16px, 200ms and 320ms — a declaration disagreeing
-        // with the thing it describes, which is the defect this whole foundation exists to fix.
-        //
-        // It cannot read that file: the standard lives outside any package and is not published,
-        // so this is a copy and a change here has to be made in both places deliberately.
-        const radii = preset.theme!.extend!.borderRadius as Record<string, string>;
-        const durations = preset.theme!.extend!.transitionDuration as Record<string, string>;
-
-        expect(radii).toEqual({ control: '0.5rem', card: '0.75rem', panel: '1rem' });
-        expect(Object.keys(durations)).toEqual(['fast', 'normal', 'slow']);
-        expect(tokensCss).toContain('--duration-fast: 120ms');
-        expect(tokensCss).toContain('--duration-normal: 200ms');
-        expect(tokensCss).toContain('--duration-slow: 320ms');
-        // The standard's easing, verbatim.
-        expect(tokensCss).toContain('--ease-standard: cubic-bezier(0.2, 0, 0, 1)');
-    });
-
     it('asks every panel for the same type scale, including the display cut', () => {
         const fonts = preset.theme!.extend!.fontFamily as Record<string, string[]>;
         const sizes = preset.theme!.extend!.fontSize as Record<string, unknown>;
@@ -131,5 +112,47 @@ describe('design foundation', () => {
         for (const step of ['caption', 'small', 'label', 'body', 'h3', 'h2', 'h1', 'display']) {
             expect(sizes, step).toHaveProperty(step);
         }
+    });
+    it('declares exactly the value @iveri/tokens holds, for every colour', () => {
+        // ⚠ **This is the check three repositories could not perform.** The palette lived in
+        // this stylesheet, in `storefront-app/src/lib/theme.ts` and in `taxi-mobile`'s — each
+        // with a spec, and each spec saying in its own comment that it could not see drift
+        // against the others. With one package there is something to compare against.
+        const kebab = (name: string): string => name.replace(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`);
+        const declaredValue = (name: string): string | undefined =>
+            new RegExp(`--color-${name}:\\s*([^;]+);`, 'u').exec(tokensCss)?.[1]?.trim();
+
+        const wrong: string[] = [];
+        for (const [name, hex] of Object.entries({ ...color, ...productColor })) {
+            const expected = toRgbChannels(hex);
+            const actual = declaredValue(kebab(name));
+            if (actual !== expected) wrong.push(`--color-${kebab(name)}: ${actual ?? 'missing'} (want ${expected})`);
+        }
+
+        expect(wrong).toEqual([]);
+    });
+
+    it('carries the product voice, so the two product apps stop writing hex inline', () => {
+        // Twenty-five inline hex literals across `taxi-web` and `delivery-web`, eight distinct
+        // values, including a near-miss of `accent-soft` one part in 255 out.
+        const colors = preset.theme!.extend!.colors as Record<string, string>;
+
+        for (const name of ['hero', 'gold', 'gold-line', 'gold-hover']) {
+            expect(colors, name).toHaveProperty(name);
+        }
+    });
+
+    it('takes its radii and durations from the package rather than restating them', () => {
+        const radii = preset.theme!.extend!.borderRadius as Record<string, string>;
+
+        expect(radii).toEqual({
+            control: `${radius.control / 16}rem`,
+            card: `${radius.card / 16}rem`,
+            panel: `${radius.panel / 16}rem`,
+        });
+        expect(tokensCss).toContain(`--duration-fast: ${duration.fast}ms`);
+        expect(tokensCss).toContain(`--duration-normal: ${duration.normal}ms`);
+        expect(tokensCss).toContain(`--duration-slow: ${duration.slow}ms`);
+        expect(tokensCss).toContain(`--ease-standard: ${easing.standard}`);
     });
 });

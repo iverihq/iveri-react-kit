@@ -43,7 +43,7 @@ export function Badge({
     title,
     hasDot = false,
     className,
-}: Readonly<BadgeProps>): JSX.Element {
+}: Readonly<BadgeProps>): React.JSX.Element {
     return (
         <span
             title={title}

@@ -90,7 +90,7 @@ export function Button({
     type = 'button',
     className,
     ...rest
-}: Readonly<ButtonProps>): JSX.Element {
+}: Readonly<ButtonProps>): React.JSX.Element {
     const isLink = variant === 'link';
 
     return (

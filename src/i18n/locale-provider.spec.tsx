@@ -30,7 +30,13 @@ const catalog: TranslationCatalog = {
     versions: { 'web-shell': 1 },
 };
 
-function Probe({ messageKey, values }: { messageKey: string; values?: Record<string, string | number> }): JSX.Element {
+function Probe({
+    messageKey,
+    values,
+}: {
+    messageKey: string;
+    values?: Record<string, string | number>;
+}): React.JSX.Element {
     const { t, locale } = useTranslation();
 
     return (

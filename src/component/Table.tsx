@@ -18,7 +18,7 @@ interface TableProps {
  * them one table at a time — where a config-driven table would mean rewriting every page that
  * has one before any of it could ship.
  */
-export function Table({ children, caption, className }: Readonly<TableProps>): JSX.Element {
+export function Table({ children, caption, className }: Readonly<TableProps>): React.JSX.Element {
     return (
         <div className="-mx-px overflow-x-auto">
             <table className={cn('w-full border-collapse text-left text-small', className)}>
@@ -38,7 +38,7 @@ export function Table({ children, caption, className }: Readonly<TableProps>): J
 export function TableHead({
     children,
     isSticky = true,
-}: Readonly<{ children: ReactNode; isSticky?: boolean }>): JSX.Element {
+}: Readonly<{ children: ReactNode; isSticky?: boolean }>): React.JSX.Element {
     return (
         <thead
             className={cn(
@@ -51,7 +51,7 @@ export function TableHead({
     );
 }
 
-export function TableBody({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
+export function TableBody({ children }: Readonly<{ children: ReactNode }>): React.JSX.Element {
     return <tbody className="divide-y divide-line">{children}</tbody>;
 }
 
@@ -63,7 +63,12 @@ interface TableRowProps {
     className?: string;
 }
 
-export function TableRow({ children, isSelected = false, onClick, className }: Readonly<TableRowProps>): JSX.Element {
+export function TableRow({
+    children,
+    isSelected = false,
+    onClick,
+    className,
+}: Readonly<TableRowProps>): React.JSX.Element {
     const isInteractive = onClick !== undefined;
 
     return (
@@ -96,7 +101,7 @@ export function TableHeaderCell({
     isNumeric = false,
     className,
     ...rest
-}: Readonly<HeaderCellProps>): JSX.Element {
+}: Readonly<HeaderCellProps>): React.JSX.Element {
     return (
         <th
             scope="col"
@@ -126,7 +131,7 @@ export function TableCell({
     isPrimary = false,
     className,
     ...rest
-}: Readonly<CellProps>): JSX.Element {
+}: Readonly<CellProps>): React.JSX.Element {
     return (
         <td
             className={cn(

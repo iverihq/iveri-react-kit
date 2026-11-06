@@ -21,7 +21,7 @@ interface LocaleSelectProps {
  * A bare `select` with a visually hidden label rather than the kit's `SelectField`, because this
  * sits in navigation chrome rather than a form, and a stacked label there is a row of wasted space.
  */
-export function LocaleSelect({ label, className }: Readonly<LocaleSelectProps>): JSX.Element {
+export function LocaleSelect({ label, className }: Readonly<LocaleSelectProps>): React.JSX.Element {
     const { locale, locales, setLocale } = useTranslation();
 
     return (

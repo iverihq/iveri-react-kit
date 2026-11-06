@@ -37,7 +37,7 @@ export function SegmentedControl<TValue extends string>({
     onChange,
     size = 'md',
     className,
-}: Readonly<SegmentedControlProps<TValue>>): JSX.Element {
+}: Readonly<SegmentedControlProps<TValue>>): React.JSX.Element {
     return (
         <div
             role="radiogroup"

@@ -64,7 +64,7 @@ export function LocaleProvider({
     initialLocale,
     storageKey,
     children,
-}: Readonly<LocaleProviderProps>): JSX.Element {
+}: Readonly<LocaleProviderProps>): React.JSX.Element {
     const known = useMemo(() => new Set(catalog.locales.map((locale) => locale.code)), [catalog]);
 
     const [locale, setLocaleState] = useState<string>(

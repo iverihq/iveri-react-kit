@@ -25,7 +25,7 @@ interface AvatarProps {
  * reserves for primary actions and selection. Recognition comes from the initials and from a
  * real photograph where there is one — not from a palette nobody can learn.
  */
-export function Avatar({ name, imageUrl, size = 'md', className }: Readonly<AvatarProps>): JSX.Element {
+export function Avatar({ name, imageUrl, size = 'md', className }: Readonly<AvatarProps>): React.JSX.Element {
     const shell = cn(
         'inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full',
         'ring-1 ring-inset ring-accent-line',

@@ -7,7 +7,7 @@ interface SpinnerProps {
     className?: string;
 }
 
-export function Spinner({ size = 'md', className }: Readonly<SpinnerProps>): JSX.Element {
+export function Spinner({ size = 'md', className }: Readonly<SpinnerProps>): React.JSX.Element {
     return (
         <svg
             className={cn('animate-spin', SIZE_CLASS[size], className)}

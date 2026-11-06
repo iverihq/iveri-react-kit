@@ -28,7 +28,7 @@ export function PageHeader({
     actions,
     toolbar,
     className,
-}: Readonly<PageHeaderProps>): JSX.Element {
+}: Readonly<PageHeaderProps>): React.JSX.Element {
     return (
         <header className={cn('flex flex-col gap-4', className)}>
             <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">

@@ -29,7 +29,7 @@ export function Panel({
     children,
     isFlush = false,
     className,
-}: Readonly<PanelProps>): JSX.Element {
+}: Readonly<PanelProps>): React.JSX.Element {
     const hasHeader = title !== undefined || actions !== undefined;
 
     return (

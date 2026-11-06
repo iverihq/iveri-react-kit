@@ -1,9 +1,13 @@
 {
   "extends": "@iveri/tsconfig/react.json",
   "compilerOptions": {
+    // A published library resolves the way Node does, not the way a bundler forgives. Under
+    // `bundler` this package once shipped a directory import every panel's Vite accepted and Node
+    // rejected; `nodenext` makes that a compile error instead of a consumer's surprise.
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "outDir": "./dist",
     "noEmit": true
   },
-  "include": ["src/**/*", "vite.config.ts", "preview/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "vite.config.ts", "preview/**/*"]
 }

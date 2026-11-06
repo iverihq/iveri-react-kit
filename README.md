@@ -5,39 +5,46 @@ The Iveri design foundation and the shared React primitives every panel is built
 ## Entry points
 
 ```text
-@iveri/react-kit                  the components and the i18n runtime
-@iveri/react-kit/styles.css       the typefaces, the semantic tokens and the base layer
-@iveri/react-kit/tailwind-preset  the Tailwind theme: colours, type scale, radii, shadows, motion
+@iveri/react-kit            the components and the i18n runtime, as native ES modules
+@iveri/react-kit/theme.css  the Tailwind 4 theme: typefaces, tokens, type scale, elevation,
+                            motion and the base layer
 ```
 
 It depends on `@iveri/contracts` **never** — see `CLAUDE.md` for why that is a rule rather than
 a coincidence — and on `@iveri/nest-sdk` never. Its only runtime dependencies are the three
-self-hosted font packages the stylesheet imports and `intl-messageformat`.
+self-hosted font packages the theme imports and `intl-messageformat`. React 19 is the peer.
 
 ## Adopting it in an app
 
-Two lines of config and one import. The stylesheet has to come before the app's own CSS, because
-it declares the custom properties the Tailwind theme resolves against.
+Tailwind 4 through its Vite plugin, and two lines of CSS:
 
-```ts
-// tailwind.config.ts — the preset is CommonJS; see "Verifying a release" for why
-import preset from '@iveri/react-kit/tailwind-preset';
-
-export default {
-    presets: [preset],
-    content: ['./index.html', './src/**/*.{ts,tsx}', './node_modules/@iveri/react-kit/dist/**/*.js'],
-} satisfies Config;
+```css
+/* src/index.css */
+@import 'tailwindcss';
+@import '@iveri/react-kit/theme.css';
 ```
 
 ```ts
-// src/main.tsx
-import '@iveri/react-kit/styles.css';
-import './index.css';
+// vite.config.ts
+plugins: [react(), tailwindcss()],
 ```
 
-Scanning `@iveri/react-kit/dist/**/*.js` is not optional: these primitives are styled with
-utility classes, so without it Tailwind emits none of them and every shared button arrives
-unstyled — which is how `delivery-web` once shipped visibly broken controls.
+No `tailwind.config`, no PostCSS config, no `content` list. The theme declares
+`@source '../dist'` relative to itself, so Tailwind scans the kit's components wherever the
+package is installed — without that every shared button would arrive unstyled, which is how
+`delivery-web` once shipped visibly broken controls.
+
+### What changed from 0.8 (Tailwind 3)
+
+- `./styles.css` and `./tailwind-preset` are gone; `./theme.css` replaces both.
+- Colours are hex. An opacity modifier (`bg-accent/10`) is built with `color-mix()`, so
+  hand-written CSS reads `var(--color-accent)`, never `rgb(var(--color-accent))`.
+- Tailwind 4 changed three defaults the kit puts back for every app: an uncoloured `border` is
+  `line` (not `currentColor`), a button has the pointer cursor, and `rounded-sm` is now
+  `rounded-xs` (2px). Tailwind 4's `outline-none` no longer hides an outline only visually; the
+  kit uses `outline-hidden`.
+- `shadow-sm`…`xl` are the kit's own, as before, so **do not accept `@tailwindcss/upgrade`'s
+  rename of `shadow-sm` to `shadow-xs`** — that rename is for Tailwind's default scale.
 
 ## The foundation
 
@@ -68,24 +75,23 @@ value, so the three text levels the standard describes were two wearing three na
 equalled `--color-accent` in four of them, which made an info badge and an accent badge the same
 badge.
 
-`src/theme/design-foundation.spec.ts` pins all of it: every colour, shadow, easing and duration the
-preset maps has a declared value; the text levels are four different colours; `info` is not the
-accent; every imported font package is installed; and Georgian is covered. None of that is visible
-to `tsc` — a utility class for an undeclared colour compiles to `rgb(var(--color-nothing))`, which
-the browser drops, leaving the inherited colour, and inherited is usually close enough to look
-deliberate.
+`src/theme/design-foundation.spec.ts` pins all of it: every colour the package holds is declared;
+the text levels are four different colours; `info` is not the accent; every imported font package
+is installed; and Georgian is covered. `src/theme/theme-compile.spec.ts` then **compiles the theme
+with Tailwind 4** and asks for every utility the kit promises — a background, text and border class
+for every colour, the radii, durations, easings, type scale, shadows and animations — because a
+variable that is declared is not evidence of a class that is generated: Tailwind 4 reads
+durations from `--transition-duration-*`, and a theme spelling them the Tailwind 3 way declares a
+value and generates nothing.
 
-**The values come from `@iveri/tokens`**, which is also what the two Expo apps read. Those apps
-used to hold a hand-maintained copy of this palette — three copies in all, each with a spec, and
-each spec saying in its own comment that it could not see drift against the others. The spec here
-now compares every declared `--color-*` against `toRgbChannels(color[name])`, and the **preset
-derives its colour names from the package**, so a token added there becomes a utility with no
-edit here and the spec then fails until `styles/tokens.css` declares its value. The two halves of
-a token can no longer be added one at a time.
+**The values come from `@iveri/tokens`**, which is also what the Expo apps read. Those apps used to
+hold a hand-maintained copy of this palette — three copies in all, each with a spec, and each spec
+saying in its own comment that it could not see drift against the others.
 
-`styles/tokens.css` stays hand-written rather than generated: it is mostly reasoning —
-`color-scheme`, the font imports, the scrollbar, `::selection`, reduced motion — and a generator
-would have to template all of it to keep eight comments.
+**`styles/tokens.css` is generated** by `scripts/build-theme.mjs` (`pnpm theme`), and `pnpm build`
+fails when the committed file is not what the package generates. 0.8.0 declined to generate the
+stylesheet because it was mostly reasoning; the reasoning now lives in the hand-written
+`styles/theme.css`, so the generated half holds values only and there is nothing to template.
 
 ### The product voice is eight more tokens
 
@@ -154,21 +160,15 @@ Three rules the components encode, each with a spec:
 
 ## Verifying a release
 
-`pnpm build` runs `scripts/verify-package.mjs`, which loads every JavaScript entry point under
-**Node** rather than a bundler, requires every subpath offering a `require` condition through the
-**CJS** loader as well, checks each path in `exports` exists and is covered by `files`, resolves
-every font the stylesheet imports, and refuses a Tailwind directive in the stylesheet.
+`pnpm build` checks `styles/tokens.css` against `@iveri/tokens`, then `scripts/verify-package.mjs`
+loads `dist/index.js` under **Node**, imported and required, rather than under a bundler; checks
+each path in `exports` exists and is covered by `files`; resolves every font the theme imports;
+and confirms the stylesheet the theme imports is published.
 
-Three shipped defects had that shape and none was visible to `tsc`: a directory import this
-package could not load outside Vite, `@iveri/nest-sdk@0.22.0` being unloadable for ten of twelve
-services, and `./tailwind-preset` published as ESM in 0.5.0.
-
-⚠ **That last one is why the preset is a `.cjs` file.** Tailwind loads a consumer's
-`tailwind.config.ts` through `jiti`, which resolves with the CJS loader — and that loader honours
-only the `node` and `require` export conditions. Every panel failed with `Package subpath
-'./tailwind-preset' is not defined by "exports"`, a message naming the one thing that was not
-wrong. Its declaration is `tailwind-preset.d.cts` using `export =`, because TypeScript matches a
-declaration's extension to the implementation's and a `.d.ts` beside a `.cjs` is never found.
+Two shipped defects had that shape and neither was visible to `tsc`: a directory import this
+package could not load outside Vite, and a Tailwind 3 preset published with only an `import`
+condition while Tailwind loaded it through `require`. The package now compiles under `nodenext`,
+so the first is a compile error, and the second cannot recur because there is no preset.
 
 ## i18n
 

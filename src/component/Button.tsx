@@ -42,7 +42,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
  * control, so it is defined once here rather than per component, where six panels would drift.
  */
 export const FOCUS_RING =
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface';
+    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface';
 
 /**
  * Sizes.
@@ -111,7 +111,7 @@ export function Button({
                 // gets styled away, which is how buttons end up with no focus state at all
                 // — which is where this one was.
                 FOCUS_RING,
-                isLink && 'rounded-sm focus-visible:ring-offset-1',
+                isLink && 'rounded-xs focus-visible:ring-offset-1',
                 VARIANT_CLASS[variant],
                 isLink ? LINK_SIZE_CLASS[size] : SIZE_CLASS[size],
                 isBlock && 'w-full',

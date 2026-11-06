@@ -30,7 +30,7 @@ export function Skeleton({ className }: Readonly<SkeletonProps>): React.JSX.Elem
             aria-hidden="true"
             className={cn(
                 'animate-shimmer rounded bg-[length:200%_100%]',
-                'bg-[linear-gradient(90deg,rgb(var(--color-raised)),rgb(var(--color-sunken)),rgb(var(--color-raised)))]',
+                'bg-[linear-gradient(90deg,var(--color-raised),var(--color-sunken),var(--color-raised))]',
                 className,
             )}
         />

@@ -26,7 +26,7 @@ interface FieldShellProps {
     children: (controlId: string, hasError: boolean, descriptionId: string | undefined) => ReactNode;
 }
 
-export function Field({ label, hint, error, children }: Readonly<FieldShellProps>): JSX.Element {
+export function Field({ label, hint, error, children }: Readonly<FieldShellProps>): React.JSX.Element {
     const controlId = useId();
     const descriptionId = useId();
     const hasError = error !== undefined && error.length > 0;
@@ -162,7 +162,13 @@ interface CheckboxProps {
     disabled?: boolean;
 }
 
-export function CheckboxField({ label, hint, checked, onChange, disabled }: Readonly<CheckboxProps>): JSX.Element {
+export function CheckboxField({
+    label,
+    hint,
+    checked,
+    onChange,
+    disabled,
+}: Readonly<CheckboxProps>): React.JSX.Element {
     const controlId = useId();
 
     return (

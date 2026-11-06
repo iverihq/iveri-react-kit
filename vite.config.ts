@@ -13,5 +13,9 @@ export default defineConfig({
         globals: true,
         environment: 'jsdom',
         include: ['src/**/*.spec.{ts,tsx}'],
+        // Node 25 began defining its own global `localStorage`, which is undefined without a
+        // backing file and shadows jsdom's — so a spec touching storage reads `undefined`. These
+        // specs stand in for a browser, so Node's is switched off in the workers.
+        poolOptions: { forks: { execArgv: ['--no-experimental-webstorage'] } },
     },
 });

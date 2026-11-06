@@ -24,7 +24,7 @@ interface SkeletonProps {
  * sweep plainly means *in progress*. The gradient is a loading affordance rather than
  * decoration, which is why it is the one place in the system that uses one.
  */
-export function Skeleton({ className }: Readonly<SkeletonProps>): JSX.Element {
+export function Skeleton({ className }: Readonly<SkeletonProps>): React.JSX.Element {
     return (
         <div
             aria-hidden="true"
@@ -43,7 +43,7 @@ export function Skeleton({ className }: Readonly<SkeletonProps>): JSX.Element {
  * The last line is short, because a loading paragraph whose every line is full width reads as a
  * table rather than prose.
  */
-export function SkeletonText({ lines = 3 }: Readonly<{ lines?: number }>): JSX.Element {
+export function SkeletonText({ lines = 3 }: Readonly<{ lines?: number }>): React.JSX.Element {
     return (
         <div className="flex flex-col gap-2" role="status" aria-busy="true">
             {Array.from({ length: lines }, (_, index) => (

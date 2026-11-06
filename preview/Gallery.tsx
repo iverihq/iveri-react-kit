@@ -29,7 +29,7 @@ function Section({
     title,
     note,
     children,
-}: Readonly<{ title: string; note?: string; children: ReactNode }>): JSX.Element {
+}: Readonly<{ title: string; note?: string; children: ReactNode }>): React.JSX.Element {
     return (
         <section className="flex flex-col gap-4">
             <div className="flex flex-col gap-1 border-b border-line pb-2">
@@ -76,7 +76,7 @@ const ORDERS = [
     { id: 'IV-10291', buyer: 'Giorgi Abashidze', status: 'Undeliverable', tone: 'critical', total: '76.20', lines: 2 },
 ] as const;
 
-export function Gallery(): JSX.Element {
+export function Gallery(): React.JSX.Element {
     const [filter, setFilter] = useState<'all' | 'open' | 'done'>('open');
     const [selected, setSelected] = useState('IV-10293');
     const [isSubscribed, setIsSubscribed] = useState(true);

@@ -26,7 +26,7 @@ export function EmptyState({
     icon,
     size = 'full',
     className,
-}: Readonly<EmptyStateProps>): JSX.Element {
+}: Readonly<EmptyStateProps>): React.JSX.Element {
     return (
         <div
             className={cn(

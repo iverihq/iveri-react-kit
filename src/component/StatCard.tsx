@@ -41,7 +41,7 @@ function deltaTone(trend: StatTrend, isGoodWhen: 'up' | 'down'): string {
  * should be the largest thing in its card — and the label above it is the caption, not the
  * heading. Figures are tabular so a row of cards does not jitter as they update.
  */
-export function StatCard({ label, value, hint, icon, delta, className }: Readonly<StatCardProps>): JSX.Element {
+export function StatCard({ label, value, hint, icon, delta, className }: Readonly<StatCardProps>): React.JSX.Element {
     return (
         <div
             className={cn(

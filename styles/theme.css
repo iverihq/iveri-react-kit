@@ -1,0 +1,255 @@
+/**
+ * The Iveri design foundation, for Tailwind 4: the typefaces, the type scale, elevation, motion and
+ * the base layer. Every app's Tailwind entry imports it straight after Tailwind itself:
+ *
+ *     @import 'tailwindcss';
+ *     @import '@iveri/react-kit/theme.css';
+ *
+ * **One copy, imported by every app.** Each panel used to declare these values in its own
+ * `index.css`, which had already drifted into four variants — two of them with a different accent,
+ * and all six with `--color-faint` set to the same value as `--color-muted`, so the three-level
+ * text hierarchy the standard describes was actually two.
+ *
+ * **Two files, split on what each holds.** `tokens.css` is generated from `@iveri/tokens` — every
+ * colour, radius, easing and duration, values only — so the palette has one source and cannot
+ * drift. This file is written by hand because it is mostly reasoning. 0.8.0 declined to generate
+ * anything on exactly that ground; splitting the halves is what removed it.
+ *
+ * Colours are hex rather than channel triplets. Tailwind 4 builds an opacity modifier with
+ * `color-mix()`, so `bg-accent/10` needs no `<alpha-value>` placeholder, and the indirection that
+ * existed only to feed one is gone.
+ */
+
+/* Self-hosted, never a Google Fonts link: a CDN font is a third-party request on every page
+ * load, it fails with the laptop offline, and it is a question we would rather not answer for an
+ * EU customer. These resolve from the kit's own dependencies, so one install fixes every panel. */
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/inter-tight/wght.css';
+@import '@fontsource/noto-sans-georgian/400.css';
+@import '@fontsource/noto-sans-georgian/500.css';
+@import '@fontsource/noto-sans-georgian/600.css';
+@import '@fontsource/noto-sans-georgian/700.css';
+@import './tokens.css';
+
+/* The kit's components are scanned wherever the package is installed. Relative to this file, so
+ * an app never has to know where the package keeps its build. */
+@source '../dist';
+
+@theme {
+    /* A browser substitutes per glyph, so Latin renders in Inter and Georgian falls through to
+     * Noto — which is the whole reason that second family is here. Inter carries no Georgian, and
+     * every panel ships Georgian. */
+    --font-sans: 'Inter Variable', 'Inter', 'Noto Sans Georgian', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    /* The same family, cut tighter. Headings only, where Inter's UI spacing reads loose — and a
+     * tighter cut rather than a second voice, which keeps a display face out of a product screen. */
+    --font-display:
+        'Inter Tight Variable', 'Inter Tight', 'Inter Variable', 'Noto Sans Georgian', system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* The standard's scale, with the optical tracking it does not specify. Negative tracking at
+     * display sizes is the single clearest difference between type that was set and type that was
+     * merely made bigger. */
+    --text-2xs: 0.6875rem;
+    --text-2xs--line-height: 1rem;
+    --text-2xs--letter-spacing: 0.01em;
+    --text-caption: 0.75rem;
+    --text-caption--line-height: 1rem;
+    --text-caption--letter-spacing: 0.01em;
+    --text-small: 0.875rem;
+    --text-small--line-height: 1.25rem;
+    --text-label: 0.875rem;
+    --text-label--line-height: 1.25rem;
+    --text-body: 1rem;
+    --text-body--line-height: 1.5rem;
+    --text-h3: 1.125rem;
+    --text-h3--line-height: 1.75rem;
+    --text-h3--letter-spacing: -0.01em;
+    --text-h2: 1.5rem;
+    --text-h2--line-height: 2rem;
+    --text-h2--letter-spacing: -0.015em;
+    --text-h1: 2rem;
+    --text-h1--line-height: 2.5rem;
+    --text-h1--letter-spacing: -0.022em;
+    --text-display: 2.5rem;
+    --text-display--line-height: 3rem;
+    --text-display--letter-spacing: -0.028em;
+
+    /* Two layers each — a tight contact shadow plus a wide soft one — tinted with the ink rather
+     * than pure black, which is the difference between a card sitting on the page and a card with
+     * a grey smudge under it. These replace Tailwind's own `sm`…`xl`, deliberately: the kit's
+     * components and every panel already speak these names. */
+    --shadow-sm: 0 1px 2px -1px rgb(17 23 41 / 0.08), 0 1px 1px rgb(17 23 41 / 0.04);
+    --shadow-md: 0 1px 2px rgb(17 23 41 / 0.04), 0 4px 12px -2px rgb(17 23 41 / 0.08);
+    --shadow-lg: 0 2px 4px rgb(17 23 41 / 0.04), 0 12px 28px -6px rgb(17 23 41 / 0.12);
+    --shadow-xl: 0 4px 8px rgb(17 23 41 / 0.04), 0 24px 56px -12px rgb(17 23 41 / 0.18);
+    /* The hairline that stops a filled navy button looking like a flat rectangle. */
+    --shadow-inset: inset 0 1px 0 rgb(255 255 255 / 0.1);
+
+    /* A decelerating curve, so a thing arrives rather than coasting to a stop. `standard` and the
+     * three durations come from `@iveri/tokens`; this one is the kit's own entrance curve. */
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --animate-fade-in: fade-in var(--duration-fast) var(--ease-standard) both;
+    --animate-rise-in: rise-in var(--duration-normal) var(--ease-out-quint) both;
+    --animate-scale-in: scale-in var(--duration-fast) var(--ease-out-quint) both;
+    /* A sweep rather than a pulse: a pulsing block and a disabled block look alike. */
+    --animate-shimmer: shimmer 1.6s linear infinite;
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes rise-in {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes scale-in {
+        from {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes shimmer {
+        from {
+            background-position: -200% 0;
+        }
+        to {
+            background-position: 200% 0;
+        }
+    }
+}
+
+/* Element selectors in the base layer, so every utility still wins. */
+@layer base {
+    :root {
+        /**
+         * ⚠ The products are light-only, and a native control has to be told.
+         *
+         * Without this a browser paints every control the page does not draw itself — a checkbox,
+         * a radio, a `<select>`'s dropdown list, a date picker, the caret, the autofill wash — in
+         * the **operating system's** palette. On a machine in dark mode that is a dark control on
+         * an entirely light page: a bare checkbox renders as a filled black square.
+         *
+         * `light`, not `light dark`: there is no dark theme, so offering one leaves the controls
+         * dark and the page light. This is the line to revisit first when a dark theme is built.
+         */
+        color-scheme: light;
+    }
+
+    /* Tailwind 4 draws an uncoloured `border` in `currentColor`, which turns every input and card
+     * edge ink-dark. Every Iveri border is a `line` unless it says otherwise, so that is the
+     * default — one rule here rather than a colour remembered on every bordered element. */
+    *,
+    ::before,
+    ::after,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-line);
+    }
+
+    /* Tailwind 4 gives a button the default cursor. A control that does not look pressable reads
+     * as disabled, and every panel was written against the pointer. */
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+
+    html,
+    body,
+    #root {
+        height: 100%;
+    }
+
+    body {
+        /* No `font-family` here: Tailwind's preflight already sets it from `--font-sans`, and a
+         * second copy is a second thing to keep in step. */
+        margin: 0;
+        background-color: var(--color-canvas);
+        color: var(--color-ink);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 16px;
+        line-height: 1.5;
+        /* Inter's defaults leave `l` and `1` hard to tell apart in an id column; `cv05`
+         * straightens the `l`. */
+        font-feature-settings: 'cv05' 1;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* A number in a column has to line up with the number above it. Without this, a table of
+     * amounts is ragged and reads as a list of strings rather than figures. */
+    .tabular,
+    table td,
+    table th,
+    time,
+    code,
+    kbd,
+    samp {
+        font-variant-numeric: tabular-nums;
+    }
+
+    ::selection {
+        background-color: color-mix(in oklab, var(--color-accent) 16%, transparent);
+        color: var(--color-ink);
+    }
+
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border: 3px solid transparent;
+        border-radius: 9999px;
+        background-clip: content-box;
+        background-color: color-mix(in oklab, var(--color-faint) 50%, transparent);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: color-mix(in oklab, var(--color-muted) 65%, transparent);
+    }
+
+    /* The last-resort indicator for anything the kit's own `FOCUS_RING` does not reach. */
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+    }
+
+    /* A wide table scrolls inside its card instead of pushing the page sideways. */
+    main section > div {
+        min-width: 0;
+        overflow-x: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+        }
+    }
+}

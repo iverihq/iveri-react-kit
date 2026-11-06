@@ -1,127 +1,90 @@
-#!/usr/bin/env node
 /**
  * Proves the **published artefact** works, which is the only thing a consumer ever sees.
  *
- * Two separate defects in this fleet had this shape and neither was visible to `tsc`, a linter
- * or a reviewer:
+ * Two separate defects in this fleet had this shape and neither was visible to `tsc`, a linter or
+ * a reviewer:
  *
- * 1. This package shipped `export * from './common'` — a directory import, which Node ESM
- *    rejects. It compiles with `moduleResolution: "bundler"`, which permits that and emits it
- *    unchanged, so all six panels worked (Vite resolves it) while `dist/index.js` was
- *    unloadable by Node. The failure surfaced in a spec that imported through Node, long after
- *    it shipped.
- * 2. `@iveri/nest-sdk@0.22.0` was unloadable for ten of twelve services because its root barrel
- *    pulled in an optional peer. Its own tests passed; the first consumer without that peer
- *    found it immediately.
+ * 1. This package shipped `export * from './common'` — a directory import, which Node ESM rejects.
+ *    It compiled under `moduleResolution: "bundler"`, which permits that and emits it unchanged,
+ *    so all six panels worked (Vite resolves it) while `dist/index.js` was unloadable by Node.
+ * 2. `./tailwind-preset` shipped with only an `import` condition while Tailwind 3 loaded it
+ *    through `require`, and every panel failed with a message naming the one thing that was not
+ *    wrong.
  *
  * The lesson both times: **check the artefact, not the source** — and check every entry point,
  * because an entry point missing from `files` is published as a 404 that nothing here would
  * otherwise notice.
  */
-import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { createRequire } from 'node:module';
+import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const manifest = JSON.parse(readFileSync(resolve('package.json'), 'utf8'));
 const failures = [];
 
-/** Every path `exports` promises has to be inside something `files` publishes. */
-function publishedPaths(node) {
-    if (typeof node === 'string') return [node];
-    if (node === null || typeof node !== 'object') return [];
-
-    return Object.values(node).flatMap(publishedPaths);
-}
-
+/** Every path `exports` promises has to exist and be inside something `files` publishes. */
 const included = new Set(manifest.files);
-for (const path of new Set(publishedPaths(manifest.exports))) {
-    const relative = path.replace(/^\.\//u, '');
+const isPublished = (relative) =>
+    relative === 'package.json' || included.has(relative) || included.has(relative.split('/')[0]);
+
+for (const target of Object.values(manifest.exports).flatMap((node) =>
+    typeof node === 'string' ? [node] : Object.values(node),
+)) {
+    const relative = target.replace(/^\.\//u, '');
 
     if (!existsSync(resolve(relative))) {
-        failures.push(`exports "${path}" points at a file that does not exist`);
+        failures.push(`exports "${target}" points at a file that does not exist`);
+    } else if (!isPublished(relative)) {
+        failures.push(`exports "${target}" is not covered by "files" — it would publish as a 404`);
+    }
+}
+
+for (const field of ['main', 'module', 'types', 'typesVersions']) {
+    if (field in manifest) failures.push(`package.json still declares "${field}"; the exports map is the only entry`);
+}
+
+/** The JavaScript entry point has to load under Node, imported and required, not only under a bundler. */
+try {
+    const loaded = await import(pathToFileURL(resolve('dist/index.js')).href);
+    if (Object.keys(loaded).length === 0) throw new Error('loaded but exported nothing');
+    require(resolve('dist/index.js'));
+    console.log(`@iveri/react-kit: dist/index.js loads under Node (${Object.keys(loaded).length} exports)`);
+} catch (error) {
+    failures.push(`dist/index.js is not loadable by Node: ${error instanceof Error ? error.message : error}`);
+}
+
+/**
+ * Everything the theme imports has to reach a consumer: a font package as a real dependency, a
+ * sibling stylesheet inside `files`. A Vite build resolves these from `node_modules`, so a missing
+ * one fails in the *app* with a path nobody recognises — and the reason the foundation exists is
+ * that the previous theme named a font nothing installed at all.
+ */
+// Comments stripped first: the theme's own header shows an app's `@import` of it, which is not one.
+const theme = readFileSync(resolve('styles/theme.css'), 'utf8').replaceAll(/\/\*[\s\S]*?\*\//gu, '');
+const imports = [...theme.matchAll(/@import '([^']+)'/gu)].map(([, specifier]) => specifier);
+const fonts = imports.filter((specifier) => specifier.startsWith('@'));
+
+if (fonts.length === 0) failures.push('styles/theme.css imports no font — the theme names one');
+
+for (const specifier of fonts) {
+    const packageName = specifier.split('/').slice(0, 2).join('/');
+    if (manifest.dependencies?.[packageName] === undefined) {
+        failures.push(`styles/theme.css imports ${packageName}, which is not a dependency`);
         continue;
     }
-
-    const root = relative.split('/')[0];
-    if (!included.has(root) && !included.has(relative) && relative !== 'package.json') {
-        failures.push(`exports "${path}" is not covered by "files" — it would publish as a 404`);
-    }
-}
-
-/**
- * A subpath offering a `require` condition has to be reachable by the **CJS** loader.
- *
- * This is not hypothetical and the guard above did not catch it: `./tailwind-preset` shipped as
- * ESM with only an `import` condition, and Tailwind loads a consumer's config through `jiti`,
- * which resolves with `require`. Every panel failed with `Package subpath './tailwind-preset' is
- * not defined by "exports"` — a message naming the one thing that was not wrong. Importing the
- * file here proved nothing, because this script is ESM and took the condition that worked.
- */
-for (const [subpath, target] of Object.entries(manifest.exports)) {
-    if (typeof target !== 'object' || target === null || target.require === undefined) continue;
-
     try {
-        createRequire(import.meta.url)(resolve(target.require));
-    } catch (error) {
-        failures.push(
-            `exports "${subpath}" offers a require condition that CJS cannot load: ${error instanceof Error ? error.message : error}`,
-        );
-    }
-}
-
-/** The JavaScript entry points have to load under Node, not only under a bundler. */
-for (const entry of ['dist/index.js', 'tailwind-preset.cjs']) {
-    try {
-        const loaded = await import(pathToFileURL(resolve(entry)).href);
-        const exported = Object.keys(loaded);
-
-        if (exported.length === 0) throw new Error('loaded but exported nothing');
-        console.log(`@iveri/react-kit: ${entry} imports under Node ESM (${exported.length} exports)`);
-    } catch (error) {
-        failures.push(`${entry} is not loadable by Node ESM: ${error instanceof Error ? error.message : error}`);
-    }
-}
-
-/**
- * Every font the stylesheet imports has to be a real dependency.
- *
- * A consumer's Vite build resolves these from `node_modules`, so a missing one fails in the
- * *app* with a path nobody recognises — and the reason the whole foundation exists is that the
- * previous theme named a font that nothing installed at all.
- */
-const tokens = readFileSync(resolve('styles/tokens.css'), 'utf8');
-
-/**
- * The stylesheet has to be plain CSS.
- *
- * `@tailwind`, `@layer` and `@apply` resolve only inside a consumer's Tailwind entry, and this
- * file is imported as its own module — the first version used `@layer base` and threw on the
- * first render. Stripping the directives fixed it; this stops them coming back, because the
- * failure appears in the *app* rather than here.
- */
-const directive = /^\s*@(tailwind|layer|apply)\b/mu.exec(tokens.replaceAll(/\/\*[\s\S]*?\*\//gu, ''));
-if (directive !== null) {
-    failures.push(`styles/tokens.css uses ${directive[0].trim()} — it must be plain CSS`);
-}
-const fonts = [...tokens.matchAll(/@import '(@[^/]+\/[^/']+)([^']*)'/gu)];
-
-if (fonts.length === 0) failures.push('styles/tokens.css imports no font — the theme names one');
-
-// Reported per package, not per `@import`: one missing dependency is one problem, and four
-// subpaths of it saying so four times buries whatever else is wrong.
-for (const packageName of new Set(fonts.map(([, name]) => name))) {
-    if (manifest.dependencies?.[packageName] === undefined) {
-        failures.push(`styles/tokens.css imports ${packageName}, which is not a dependency`);
-    }
-}
-
-for (const [, packageName, subpath] of fonts) {
-    try {
-        require.resolve(`${packageName}${subpath}`);
+        require.resolve(specifier);
     } catch {
-        failures.push(`styles/tokens.css imports ${packageName}${subpath}, which does not resolve`);
+        failures.push(`styles/theme.css imports ${specifier}, which does not resolve`);
+    }
+}
+
+for (const specifier of imports.filter((candidate) => candidate.startsWith('.'))) {
+    const relative = resolve(dirname(resolve('styles/theme.css')), specifier).slice(resolve('.').length + 1);
+    if (!existsSync(resolve(relative)) || !isPublished(relative)) {
+        failures.push(`styles/theme.css imports ${specifier}, which is not published`);
     }
 }
 
@@ -131,4 +94,4 @@ if (failures.length > 0) {
     process.exit(1);
 }
 
-console.log(`@iveri/react-kit: ${fonts.length} font imports resolve; every export is published`);
+console.log(`@iveri/react-kit: ${fonts.length} font imports resolve; every export and stylesheet is published`);

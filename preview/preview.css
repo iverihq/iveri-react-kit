@@ -1,3 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import '../styles/theme.css';
+
+/* The gallery renders the kit from source, which `theme.css`'s own `@source '../dist'` does not
+ * cover until a build exists. */
+@source '../src';

@@ -60,7 +60,7 @@ export function SegmentedControl<TValue extends string>({
                             isSelected
                                 ? 'bg-surface text-ink shadow-sm'
                                 : 'text-muted hover:bg-raised hover:text-ink-soft',
-                            'focus-within:outline-none',
+                            'focus-within:outline-hidden',
                             FOCUS_RING.replaceAll('focus-visible:', 'has-[:focus-visible]:'),
                         )}
                     >

@@ -158,6 +158,25 @@ Three rules the components encode, each with a spec:
 - **`SegmentedControl` is a radio group**, so arrow keys move through it and a screen reader
   announces the position — behaviour a row of buttons does not have and would have to fake.
 
+## Session refresh
+
+`createSessionRefresh` builds the one function an app refreshes its session through, and
+`withTabLock` keeps two tabs from doing it at once. **Every API client in an app must share the
+one function.** Identity treats a rotated refresh token presented again as a leak and revokes every
+token the person holds, so a guard kept per client signs an operator out when a page calls two
+services at the same moment.
+
+```ts
+const refreshSession = createSessionRefresh<AuthTokens>({
+    withLock: withTabLock,
+    readTokens: () => tokenStore.reload()?.tokens ?? null,
+    exchange: (refreshToken) => identityClient.post('/auth/refresh', { refreshToken }, { anonymous: true }),
+    saveTokens: (tokens) => tokenStore.setTokens(tokens),
+});
+```
+
+`readTokens` must return what shared storage holds now rather than a copy from before the lock.
+
 ## Verifying a release
 
 `pnpm build` checks `styles/tokens.css` against `@iveri/tokens`, then `scripts/verify-package.mjs`

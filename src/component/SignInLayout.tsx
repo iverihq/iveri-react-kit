@@ -2,6 +2,12 @@ import { useId, type ReactNode } from 'react';
 
 interface SignInLayoutProps {
     productName: string;
+    /**
+     * A product with a look of its own draws its own mark, as `ProductShell` lets it. Absent, the
+     * Iveri mark beside the name. Drawn on the dark side on a laptop and above the form on a phone,
+     * so it should read on both.
+     */
+    brand?: ReactNode;
     /** One line about the product, large on the navy side. */
     strapline: string;
     /** The page's heading, above the form. */
@@ -30,6 +36,7 @@ function Brand({ productName }: Readonly<{ productName: string }>): React.JSX.El
  */
 export function SignInLayout({
     productName,
+    brand,
     strapline,
     heading,
     children,
@@ -47,9 +54,7 @@ export function SignInLayout({
                     </defs>
                     <rect width="100%" height="100%" fill={`url(#${patternId})`} />
                 </svg>
-                <div className="relative">
-                    <Brand productName={productName} />
-                </div>
+                <div className="relative">{brand ?? <Brand productName={productName} />}</div>
                 <div className="relative max-w-xl">
                     <span className="mb-5 block h-1 w-12 rounded-full bg-gold" aria-hidden="true" />
                     <p className="font-display text-[2.75rem] font-bold leading-[1.1] tracking-tight">{strapline}</p>
@@ -57,9 +62,7 @@ export function SignInLayout({
             </div>
             <div className="flex items-center justify-center px-4 py-10 sm:px-8">
                 <div className="w-full max-w-md">
-                    <div className="mb-8 text-ink lg:hidden">
-                        <Brand productName={productName} />
-                    </div>
+                    <div className="mb-8 text-ink lg:hidden">{brand ?? <Brand productName={productName} />}</div>
                     <h1 className="font-display text-h1 font-bold text-ink">{heading}</h1>
                     <div className="mt-6 rounded-panel border border-line bg-surface p-6 shadow-md sm:p-8">
                         {children}

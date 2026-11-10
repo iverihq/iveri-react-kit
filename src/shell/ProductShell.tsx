@@ -103,7 +103,7 @@ export function ProductShell({
                             <Link
                                 to={primaryAction.to}
                                 className={cn(
-                                    'hidden min-h-10 items-center rounded-control bg-gold px-4 text-label font-semibold text-hero',
+                                    'hidden min-h-10 items-center whitespace-nowrap rounded-control bg-gold px-4 text-label font-semibold text-hero',
                                     'shadow-sm transition-colors duration-fast hover:bg-gold-hover sm:flex',
                                     FOCUS_RING,
                                 )}

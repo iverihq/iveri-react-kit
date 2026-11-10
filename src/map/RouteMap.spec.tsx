@@ -17,6 +17,7 @@ const library = vi.hoisted(() => {
         addLayer: vi.fn(),
         getSource: vi.fn(() => ({ type: 'geojson', setData: vi.fn() })),
         getZoom: vi.fn(() => 12),
+        getBounds: vi.fn(() => ({ contains: vi.fn(() => true) })),
         easeTo: vi.fn(),
         fitBounds: vi.fn(),
         remove: vi.fn(),
@@ -79,6 +80,24 @@ describe('a route map', () => {
 
         expect(library.Marker).toHaveBeenCalledWith({ color: '#000' });
         expect(library.marker.setLngLat).toHaveBeenCalledWith([44.82, 41.71]);
+    });
+
+    it('zooms in on a lone stop when there is nothing to place', async () => {
+        render(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} ariaLabel="Map" />);
+
+        await waitFor(() => expect(library.handlers.has('load')).toBe(true));
+        library.handlers.get('load')?.({});
+
+        expect(library.map.easeTo).toHaveBeenCalledWith({ center: [44.82, 41.71], zoom: 15 });
+    });
+
+    it('keeps the view while somebody is placing stops they can already see', async () => {
+        render(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} onPick={vi.fn()} ariaLabel="Map" />);
+
+        await waitFor(() => expect(library.handlers.has('load')).toBe(true));
+        library.handlers.get('load')?.({});
+
+        expect(library.map.easeTo).not.toHaveBeenCalled();
     });
 
     it('reports where somebody tapped', async () => {

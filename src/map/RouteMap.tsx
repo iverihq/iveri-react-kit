@@ -104,7 +104,7 @@ export function RouteMap({
                         layout: { 'line-cap': 'round', 'line-join': 'round' },
                         paint: { 'line-color': ROUTE_COLOR, 'line-width': 3, 'line-dasharray': [1, 2] },
                     });
-                    draw(map, library, stopsRef.current, markersRef);
+                    draw(map, library, stopsRef.current, markersRef, onPickRef.current !== undefined);
                 });
                 map.on('error', (event) => {
                     // A tile that fails is a gap in the picture; only a style that cannot load
@@ -130,7 +130,7 @@ export function RouteMap({
         stopsRef.current = stops;
 
         if (mapRef.current && libraryRef.current && mapRef.current.getSource(ROUTE_SOURCE)) {
-            draw(mapRef.current, libraryRef.current, stops, markersRef);
+            draw(mapRef.current, libraryRef.current, stops, markersRef, onPickRef.current !== undefined);
         }
     }, [stops]);
 
@@ -142,6 +142,7 @@ function draw(
     library: MapLibre,
     stops: readonly RouteMapStop[],
     markers: React.RefObject<Marker[]>,
+    isPicking: boolean,
 ): void {
     for (const marker of markers.current) marker.remove();
 
@@ -163,6 +164,14 @@ function draw(
         });
     }
 
-    if (stops.length === 1) map.easeTo({ center: toLngLat(stops[0]), zoom: Math.max(map.getZoom(), STOP_ZOOM) });
+    if (stops.length === 1) {
+        const stop = toLngLat(stops[0]);
+
+        // Somebody placing stops is choosing the next one from this view, so a stop they can already
+        // see moves nothing. One placed from elsewhere, like their own location, still has to be shown.
+        if (!isPicking) map.easeTo({ center: stop, zoom: Math.max(map.getZoom(), STOP_ZOOM) });
+        else if (!map.getBounds().contains(stop)) map.easeTo({ center: stop });
+    }
+
     if (stops.length > 1) map.fitBounds(boundsOf(stops), { padding: FIT_PADDING, maxZoom: STOP_ZOOM, duration: 400 });
 }

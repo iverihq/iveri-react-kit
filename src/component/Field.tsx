@@ -91,10 +91,12 @@ type TextAreaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'classNam
     label: string;
     hint?: ReactNode;
     error?: string;
+    /** Sets the text in the monospaced face, for a JSON body and the like. Prose should not be. */
+    isCode?: boolean;
 };
 
 export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextAreaField(
-    { label, hint, error, rows = 4, ...rest },
+    { label, hint, error, rows = 4, isCode = false, ...rest },
     ref,
 ) {
     return (
@@ -106,7 +108,7 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaProps>(func
                     rows={rows}
                     aria-invalid={hasError}
                     aria-describedby={descriptionId}
-                    className={cn(CONTROL_CLASS, 'font-mono', hasError ? 'border-critical' : 'border-line')}
+                    className={cn(CONTROL_CLASS, isCode && 'font-mono', hasError ? 'border-critical' : 'border-line')}
                     {...rest}
                 />
             )}

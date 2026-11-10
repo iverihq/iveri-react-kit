@@ -37,6 +37,9 @@ export function ProductShell({
     children,
 }: Readonly<ProductShellProps>): React.JSX.Element {
     const { t } = useTranslation();
+    // The button in the bar already goes there, and a link beside it would say the same thing twice.
+    // The phone has no room for that button, so its tabs keep the destination.
+    const barItems = items.filter((item) => item.to !== primaryAction?.to);
 
     return (
         <div className="flex min-h-full flex-col bg-canvas text-ink">
@@ -47,7 +50,7 @@ export function ProductShell({
                         <span className="font-display text-h3 font-bold">{productName}</span>
                     </Link>
                     <nav aria-label={t('shell.section.workspace')} className="hidden items-center gap-1 md:flex">
-                        {items.map((item) => (
+                        {barItems.map((item) => (
                             <NavLink
                                 key={item.to}
                                 to={item.to}

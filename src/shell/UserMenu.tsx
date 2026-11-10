@@ -58,16 +58,16 @@ export function UserMenu({ user, links = [], onSignOut }: Readonly<UserMenuProps
                     setIsOpen((current) => !current);
                 }}
                 className={cn(
-                    'flex min-h-10 items-center gap-2 rounded-full p-1 transition-colors duration-fast hover:bg-raised sm:pr-2',
+                    'flex min-h-10 items-center gap-2 rounded-full p-1 transition-colors duration-fast hover:bg-raised lg:pr-2',
                     FOCUS_RING,
                 )}
             >
                 <Avatar name={user.name} imageUrl={user.imageUrl} size="sm" />
-                <span className="hidden max-w-36 truncate text-label font-medium text-ink-soft sm:block">
+                <span className="hidden max-w-36 truncate text-label font-medium text-ink-soft lg:block">
                     {user.name}
                 </span>
                 <ChevronIcon
-                    className={cn('hidden h-3.5 w-3.5 text-faint sm:block', isOpen ? '-rotate-90' : 'rotate-90')}
+                    className={cn('hidden h-3.5 w-3.5 text-faint lg:block', isOpen ? '-rotate-90' : 'rotate-90')}
                 />
             </button>
             {isOpen && (

@@ -52,3 +52,13 @@ These were found by diffing every element's computed style in the component gall
 Tailwind 3 and Tailwind 4: after the three fixes, the only differences left are notation
 (`color-mix()` computes to `oklab()`), the default border moving from Tailwind's gray-200 to our
 near-identical `line`, and `divide-y` drawing each divider as a bottom border instead of a top one.
+
+## `RouteMap` is its own entry point (2026-11-10)
+
+`@iveri/react-kit/map`, for the same reason the SDK keeps `/storage` apart: `maplibre-gl` is an optional peer,
+so the root barrel must never reach it, and `verify-package.mjs` proving `dist/index.js` loads is what would
+catch one that did. The library and its stylesheet are imported when the component mounts, so an app pays for
+the map only on the screens that have one.
+
+The style URL is the caller's, and an app with none configured should not render this at all. Which provider
+serves a deployment is a decision about cost and terms, not about this component.

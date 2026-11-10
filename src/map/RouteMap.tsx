@@ -67,12 +67,16 @@ export function RouteMap({
 
         const open = async (): Promise<void> => {
             try {
-                const [library] = await Promise.all([
+                const [library, worker] = await Promise.all([
                     import('maplibre-gl'),
+                    import('maplibre-gl/dist/maplibre-gl-worker.mjs?url'),
                     import('maplibre-gl/dist/maplibre-gl.css'),
                 ]);
 
                 if (mount.isAbandoned || !container.current) return;
+
+                // MapLibre finds its worker relative to its own file, and a bundler moves that file.
+                library.setWorkerUrl(worker.default);
 
                 const map = new library.Map({
                     container: container.current,

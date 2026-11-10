@@ -10,6 +10,8 @@ import { UserMenu, type UserMenuLink } from './UserMenu.js';
 
 interface ProductShellProps {
     productName: string;
+    /** A product with a look of its own draws its own mark. Absent, the Iveri mark beside the name. */
+    brand?: ReactNode;
     items: ShellNavItem[];
     /** The one thing this product exists for, which stays in reach on every screen. */
     primaryAction?: { to: string; label: string };
@@ -20,6 +22,19 @@ interface ProductShellProps {
     children: ReactNode;
 }
 
+function NavBadge({ children, className }: Readonly<{ children: ReactNode; className?: string }>): React.JSX.Element {
+    return (
+        <span
+            className={cn(
+                'tabular inline-flex min-w-4 items-center justify-center rounded-full bg-accent px-1 text-2xs font-semibold leading-4 text-white',
+                className,
+            )}
+        >
+            {children}
+        </span>
+    );
+}
+
 /**
  * The frame of a product a customer uses: a bar across the top on a laptop, tabs along the bottom
  * on a phone, where the thumb already is.
@@ -28,6 +43,7 @@ interface ProductShellProps {
  */
 export function ProductShell({
     productName,
+    brand,
     items,
     primaryAction,
     user,
@@ -46,8 +62,18 @@ export function ProductShell({
             <header className="sticky top-0 z-30 border-b border-line bg-surface/90 backdrop-blur">
                 <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">
                     <Link to={homePath} className="flex shrink-0 items-center gap-2.5">
-                        <img src="/iveri-logo-transparent.png" alt="" className="h-8 w-8" width="32" height="32" />
-                        <span className="font-display text-h3 font-bold">{productName}</span>
+                        {brand ?? (
+                            <>
+                                <img
+                                    src="/iveri-logo-transparent.png"
+                                    alt=""
+                                    className="h-8 w-8"
+                                    width="32"
+                                    height="32"
+                                />
+                                <span className="font-display text-h3 font-bold">{productName}</span>
+                            </>
+                        )}
                     </Link>
                     <nav aria-label={t('shell.section.workspace')} className="hidden items-center gap-1 md:flex">
                         {barItems.map((item) => (
@@ -68,6 +94,7 @@ export function ProductShell({
                             >
                                 {item.icon}
                                 {item.label}
+                                {item.badge !== undefined && <NavBadge>{item.badge}</NavBadge>}
                             </NavLink>
                         ))}
                     </nav>
@@ -101,13 +128,18 @@ export function ProductShell({
                         end={item.end}
                         className={({ isActive }) =>
                             cn(
-                                'flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-2xs font-medium',
+                                'relative flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-2xs font-medium',
                                 'transition-colors duration-fast',
                                 isActive ? 'text-accent' : 'text-muted',
                             )
                         }
                     >
-                        {item.icon}
+                        <span className="relative">
+                            {item.icon}
+                            {item.badge !== undefined && (
+                                <NavBadge className="absolute -right-3 -top-1.5">{item.badge}</NavBadge>
+                            )}
+                        </span>
                         <span className="max-w-full truncate">{item.label}</span>
                     </NavLink>
                 ))}

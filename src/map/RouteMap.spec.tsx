@@ -27,6 +27,7 @@ const library = vi.hoisted(() => {
     // `function`, because the component calls these with `new` and an arrow cannot be constructed.
     return {
         handlers,
+        setWorkerUrl: vi.fn(),
         map,
         marker,
         Map: vi.fn(function createMap() {
@@ -42,11 +43,13 @@ const library = vi.hoisted(() => {
 });
 
 vi.mock('maplibre-gl', () => ({
+    setWorkerUrl: library.setWorkerUrl,
     Map: library.Map,
     Marker: library.Marker,
     NavigationControl: library.NavigationControl,
 }));
 vi.mock('maplibre-gl/dist/maplibre-gl.css', () => ({}));
+vi.mock('maplibre-gl/dist/maplibre-gl-worker.mjs?url', () => ({ default: '/assets/worker.mjs' }));
 
 const STYLE = 'https://tiles.example.test/style.json';
 const CENTER = { latitude: 41.7, longitude: 44.8 };
@@ -60,6 +63,12 @@ describe('a route map', () => {
 
         await waitFor(() => expect(library.Map).toHaveBeenCalled());
         expect(library.Map.mock.calls[0]).toEqual([expect.objectContaining({ style: STYLE, center: [44.8, 41.7] })]);
+    });
+
+    it('tells MapLibre where a bundler put its worker', async () => {
+        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
+
+        await waitFor(() => expect(library.setWorkerUrl).toHaveBeenCalledWith('/assets/worker.mjs'));
     });
 
     it('puts a marker on each stop once the map has loaded', async () => {

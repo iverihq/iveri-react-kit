@@ -6,6 +6,7 @@ The Iveri design foundation and the shared React primitives every panel is built
 
 ```text
 @iveri/react-kit            the components and the i18n runtime, as native ES modules
+@iveri/react-kit/map        RouteMap, a map of a route's stops. `maplibre-gl` is an optional peer
 @iveri/react-kit/theme.css  the Tailwind 4 theme: typefaces, tokens, type scale, elevation,
                             motion and the base layer
 ```

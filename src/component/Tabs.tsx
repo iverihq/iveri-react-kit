@@ -36,7 +36,7 @@ export function Tabs<TValue extends string>({
         <div
             role="tablist"
             aria-label={label}
-            className={cn('flex gap-6 overflow-x-auto border-b border-line', className)}
+            className={cn('flex gap-6 overflow-x-auto overflow-y-hidden border-b border-line', className)}
         >
             {tabs.map((tab) => {
                 const isSelected = tab.value === value;

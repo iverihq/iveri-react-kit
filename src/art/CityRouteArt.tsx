@@ -60,7 +60,7 @@ export function CityRouteArt({ className }: Readonly<{ className?: string }>): R
                 <path key={street} d={street} stroke="#ffffff" strokeOpacity="0.14" strokeWidth="2" fill="none" />
             ))}
             <path
-                d="M150 500 C 240 470 262 372 300 330 S 420 300 470 258 S 574 146 650 120"
+                d="M150 500 C 240 470 262 372 300 330 S 420 300 470 258 S 560 240 640 226"
                 stroke="#f6c76d"
                 strokeOpacity="0.25"
                 strokeWidth="16"
@@ -68,7 +68,7 @@ export function CityRouteArt({ className }: Readonly<{ className?: string }>): R
                 fill="none"
             />
             <path
-                d="M150 500 C 240 470 262 372 300 330 S 420 300 470 258 S 574 146 650 120"
+                d="M150 500 C 240 470 262 372 300 330 S 420 300 470 258 S 560 240 640 226"
                 stroke="#f6c76d"
                 strokeWidth="5"
                 strokeLinecap="round"
@@ -76,8 +76,8 @@ export function CityRouteArt({ className }: Readonly<{ className?: string }>): R
             />
             <circle cx="150" cy="500" r="16" fill="#ffffff" />
             <circle cx="150" cy="500" r="8" fill="#14235c" />
-            <path d="M650 72c-18 0-32 14-32 32 0 24 32 56 32 56s32-32 32-56c0-18-14-32-32-32Z" fill="#f6c76d" />
-            <circle cx="650" cy="104" r="12" fill="#14235c" />
+            <path d="M640 142c-18 0-32 14-32 32 0 24 32 56 32 56s32-32 32-56c0-18-14-32-32-32Z" fill="#f6c76d" />
+            <circle cx="640" cy="174" r="12" fill="#14235c" />
         </svg>
     );
 }

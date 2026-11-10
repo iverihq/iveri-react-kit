@@ -10,6 +10,7 @@ const ROUTE_SOURCE = 'iveri-route';
 const ROUTE_COLOR = '#1b2d72';
 const FIT_PADDING = 64;
 const STOP_ZOOM = 15;
+const WIDE_SCREEN = '(min-width: 64rem)';
 
 type MapLibre = typeof MapLibreModule;
 
@@ -34,6 +35,7 @@ export function RouteMap({
     zoom = 12,
     onPick,
     onUnavailable,
+    insetLeft = 0,
     ariaLabel,
     className,
 }: {
@@ -44,6 +46,12 @@ export function RouteMap({
     zoom?: number;
     onPick?: (point: MapPoint) => void;
     onUnavailable?: () => void;
+    /**
+     * How many pixels of the left edge a floating panel covers on a wide screen. The camera centres
+     * and fits in what is left, so a route is never drawn behind the panel. Ignored on a narrow
+     * screen, where the panel sits below the map.
+     */
+    insetLeft?: number;
     ariaLabel: string;
     className?: string;
 }): React.JSX.Element {
@@ -54,7 +62,7 @@ export function RouteMap({
     const stopsRef = useRef(stops);
     const onPickRef = useRef(onPick);
     const onUnavailableRef = useRef(onUnavailable);
-    const initialView = useRef({ center, zoom });
+    const initialView = useRef({ center, zoom, insetLeft });
 
     useEffect(() => {
         onPickRef.current = onPick;
@@ -88,6 +96,11 @@ export function RouteMap({
 
                 libraryRef.current = library;
                 mapRef.current = map;
+
+                if (initialView.current.insetLeft > 0 && window.matchMedia(WIDE_SCREEN).matches) {
+                    map.setPadding({ left: initialView.current.insetLeft });
+                }
+
                 map.addControl(new library.NavigationControl({ showCompass: false }), 'top-right');
                 map.on('click', (event) => {
                     onPickRef.current?.({ latitude: event.lngLat.lat, longitude: event.lngLat.lng });

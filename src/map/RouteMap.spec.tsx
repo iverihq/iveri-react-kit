@@ -16,6 +16,7 @@ const library = vi.hoisted(() => {
         addSource: vi.fn(),
         addLayer: vi.fn(),
         getSource: vi.fn(() => ({ type: 'geojson', setData: vi.fn() })),
+        setPadding: vi.fn(),
         getZoom: vi.fn(() => 12),
         getBounds: vi.fn(() => ({ contains: vi.fn(() => true) })),
         easeTo: vi.fn(),
@@ -64,6 +65,29 @@ describe('a route map', () => {
 
         await waitFor(() => expect(library.Map).toHaveBeenCalled());
         expect(library.Map.mock.calls[0]).toEqual([expect.objectContaining({ style: STYLE, center: [44.8, 41.7] })]);
+    });
+
+    it('keeps the camera clear of a panel on a wide screen', async () => {
+        vi.stubGlobal(
+            'matchMedia',
+            vi.fn(() => ({ matches: true })),
+        );
+        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} insetLeft={456} ariaLabel="Map" />);
+
+        await waitFor(() => expect(library.map.setPadding).toHaveBeenCalledWith({ left: 456 }));
+        vi.unstubAllGlobals();
+    });
+
+    it('leaves the camera alone on a narrow screen, where the panel sits below the map', async () => {
+        vi.stubGlobal(
+            'matchMedia',
+            vi.fn(() => ({ matches: false })),
+        );
+        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} insetLeft={456} ariaLabel="Map" />);
+
+        await waitFor(() => expect(library.Map).toHaveBeenCalled());
+        expect(library.map.setPadding).not.toHaveBeenCalled();
+        vi.unstubAllGlobals();
     });
 
     it('tells MapLibre where a bundler put its worker', async () => {

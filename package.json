@@ -1,6 +1,6 @@
 {
   "name": "@iveri/react-kit",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "description": "Shared React UI primitives for Iveri admin apps.",
   "license": "MIT",
   "repository": {
@@ -23,6 +23,10 @@
     "./map": {
       "types": "./dist/map/index.d.ts",
       "default": "./dist/map/index.js"
+    },
+    "./shell": {
+      "types": "./dist/shell/index.d.ts",
+      "default": "./dist/shell/index.js"
     },
     "./theme.css": "./styles/theme.css",
     "./package.json": "./package.json"
@@ -55,12 +59,16 @@
     "intl-messageformat": "^12.1.4"
   },
   "peerDependencies": {
+    "maplibre-gl": ">=5.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "maplibre-gl": ">=5.0.0"
+    "react-router": ">=8.0.0"
   },
   "peerDependenciesMeta": {
     "maplibre-gl": {
+      "optional": true
+    },
+    "react-router": {
       "optional": true
     }
   },
@@ -84,6 +92,7 @@
     "prettier": "^3.9.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "react-router": "^8.5.1",
     "rimraf": "^6.1.4",
     "tailwindcss": "^4.3.5",
     "typescript": "~6.0.3",

@@ -62,3 +62,26 @@ the map only on the screens that have one.
 
 The style URL is the caller's, and an app with none configured should not render this at all. Which provider
 serves a deployment is a decision about cost and terms, not about this component.
+
+## The two shells are their own entry point (2026-11-10)
+
+`@iveri/react-kit/shell` carries `AdminShell` and `ProductShell`, apart from the root for the same reason as
+`/map`: `react-router` is an optional peer, and `verify-package.mjs` proving `dist/index.js` loads is what would catch
+the root reaching it. **All five admin panels had hand-built a sidebar and they had drifted**, which is the
+second-consumer rule met five times over.
+
+**A shell reads its own labels from the `web-shell` namespace**, unlike every root component, which takes translated
+props. Eight labels through seven apps is fifty-six lines of plumbing that could only ever be wrong, and every app
+using a shell already pulls that namespace. A missing key renders as the key, which is visible.
+
+**Navy reaches an admin screen in exactly one place, the sidebar.** The working surface stays white, as the standard
+asks; the frame is what makes a panel recognisable.
+
+**The command palette needs no server.** It lists the panel's destinations and whatever `commands` the panel passes.
+Searching a panel's *data* is that panel's own screen.
+
+## Charts have no library (2026-11-10)
+
+`BarChart`, `Sparkline`, `Meter` and `StackedBar` are flexbox and one small SVG. A dashboard here plots one measure over
+some days, and a charting package for that is a bundle, a licence and an upgrade. Each keeps its values reachable
+without hovering, through a screen-reader table or a legend in words.

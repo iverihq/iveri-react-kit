@@ -97,7 +97,9 @@ export function RouteMap({
                 libraryRef.current = library;
                 mapRef.current = map;
 
-                if (window.matchMedia(WIDE_SCREEN).matches) map.setPadding({ left: initialView.current.insetLeft });
+                if (initialView.current.insetLeft > 0 && window.matchMedia(WIDE_SCREEN).matches) {
+                    map.setPadding({ left: initialView.current.insetLeft });
+                }
 
                 map.addControl(new library.NavigationControl({ showCompass: false }), 'top-right');
                 map.on('click', (event) => {

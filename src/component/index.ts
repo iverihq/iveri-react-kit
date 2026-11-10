@@ -9,6 +9,7 @@ export * from './Pagination.js';
 export * from './Panel.js';
 export * from './SearchField.js';
 export * from './SegmentedControl.js';
+export * from './SignInLayout.js';
 export * from './Skeleton.js';
 export * from './Spinner.js';
 export * from './StatCard.js';

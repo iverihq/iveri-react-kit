@@ -78,7 +78,7 @@ using a shell already pulls that namespace. A missing key renders as the key, wh
 asks; the frame is what makes a panel recognisable.
 
 **The command palette needs no server.** It lists the panel's destinations and whatever `commands` the panel passes.
-Searching a panel's *data* is that panel's own screen.
+Searching a panel's _data_ is that panel's own screen.
 
 ## Charts have no library (2026-11-10)
 

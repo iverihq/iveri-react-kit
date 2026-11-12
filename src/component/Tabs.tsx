@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import { cn } from '../common/index.js';
 
 import { FOCUS_RING } from './Button.js';
@@ -18,12 +20,38 @@ interface TabsProps<TValue extends string> {
     className?: string;
 }
 
+/** Which edges of a sideways-scrolling row have more beyond them. */
+interface Overflow {
+    hasBefore: boolean;
+    hasAfter: boolean;
+}
+
+/** The fade on each edge that has more beyond it, standing in for the scrollbar the row hides. */
+const FADE: Readonly<Record<'none' | 'before' | 'after' | 'both', string>> = {
+    none: '',
+    before: '[mask-image:linear-gradient(to_right,transparent,black_2rem)]',
+    after: '[mask-image:linear-gradient(to_left,transparent,black_2rem)]',
+    both: '[mask-image:linear-gradient(to_right,transparent,black_2rem,black_calc(100%-2rem),transparent)]',
+};
+
+/** How far a row is from either end before it counts as there, so a fraction of a pixel draws no fade. */
+const EDGE_SLACK = 1;
+
+function measure(row: HTMLElement): Overflow {
+    return {
+        hasBefore: row.scrollLeft > EDGE_SLACK,
+        hasAfter: row.scrollLeft + row.clientWidth < row.scrollWidth - EDGE_SLACK,
+    };
+}
+
 /**
  * Sections of one page, on an underline.
  *
  * `SegmentedControl` narrows what a list shows; this moves between different content, and the two
  * looking alike would blur that. The row scrolls sideways rather than wrapping, because a second
- * line of tabs reads as a second set of tabs.
+ * line of tabs reads as a second set of tabs. On a phone that is the usual case, so the scrollbar
+ * is hidden and an edge with more beyond it fades instead, and the selected tab is always scrolled
+ * into the row: one opened from a link is otherwise off the screen with nothing saying it is there.
  */
 export function Tabs<TValue extends string>({
     label,
@@ -32,11 +60,69 @@ export function Tabs<TValue extends string>({
     onChange,
     className,
 }: Readonly<TabsProps<TValue>>): React.JSX.Element {
+    const row = useRef<HTMLDivElement>(null);
+    const [overflow, setOverflow] = useState<Overflow>({ hasBefore: false, hasAfter: false });
+
+    useEffect(() => {
+        const element = row.current;
+        if (element === null) return undefined;
+
+        const update = (): void => {
+            const next = measure(element);
+
+            setOverflow((current) =>
+                current.hasBefore === next.hasBefore && current.hasAfter === next.hasAfter ? current : next,
+            );
+        };
+        // Absent only outside a browser, where nothing is laid out to overflow.
+        const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+
+        observer?.observe(element);
+        element.addEventListener('scroll', update, { passive: true });
+        update();
+
+        return (): void => {
+            observer?.disconnect();
+            element.removeEventListener('scroll', update);
+        };
+    }, []);
+
+    // Moves the row only, never the page: `scrollIntoView` would also scroll every ancestor.
+    useEffect(() => {
+        const element = row.current;
+        const selected = element?.querySelector<HTMLElement>('[aria-selected="true"]');
+        if (element === null || selected === null || selected === undefined) return;
+
+        const start = selected.offsetLeft - element.offsetLeft;
+        const end = start + selected.offsetWidth;
+
+        if (start < element.scrollLeft) {
+            element.scrollLeft = start;
+        } else if (end > element.scrollLeft + element.clientWidth) {
+            element.scrollLeft = end - element.clientWidth;
+        }
+    }, [value]);
+
+    const fade =
+        overflow.hasBefore && overflow.hasAfter
+            ? 'both'
+            : overflow.hasBefore
+              ? 'before'
+              : overflow.hasAfter
+                ? 'after'
+                : 'none';
+
     return (
         <div
+            ref={row}
             role="tablist"
             aria-label={label}
-            className={cn('flex gap-6 overflow-x-auto overflow-y-hidden border-b border-line', className)}
+            className={cn(
+                'flex gap-6 overflow-x-auto overflow-y-hidden border-b border-line',
+                '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+                FADE[fade],
+                className,
+            )}
         >
             {tabs.map((tab) => {
                 const isSelected = tab.value === value;

@@ -93,3 +93,9 @@ Past five it keeps four and gathers the rest under **More**, a sheet above the b
 outside it and on going anywhere. Its open state is the page it was opened on rather than a flag an effect resets.
 Labels take two lines instead of an ellipsis, and the tabs are top-aligned so a two-line label does not lift its icon.
 `?shell` in the gallery draws the frame with the fleet's longest labels.
+
+## A row of tabs that does not fit scrolls quietly (2026-11-12)
+
+`Tabs` hides its scrollbar, fades whichever edge has more beyond it, and scrolls the selected tab into the row. Four
+Georgian tabs overflow a phone, and a tab opened from a link was otherwise off the screen with only a grey scrollbar
+saying anything was there. The row moves by `scrollLeft`, never `scrollIntoView`, which would scroll the page too.

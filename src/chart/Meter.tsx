@@ -34,9 +34,10 @@ export function Meter({
 
     return (
         <div className={cn('flex flex-col gap-1.5', className)}>
-            <div className="flex items-baseline justify-between gap-3">
-                <span className="min-w-0 truncate text-label font-medium text-ink-soft">{label}</span>
-                {detail !== undefined && <span className="tabular shrink-0 text-small text-muted">{detail}</span>}
+            {/* Wraps rather than truncating, because a Georgian label cut short reads as a different word. */}
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                <span className="min-w-0 text-label font-medium text-ink-soft [overflow-wrap:anywhere]">{label}</span>
+                {detail !== undefined && <span className="tabular text-small text-muted">{detail}</span>}
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-raised" role="presentation">
                 <div

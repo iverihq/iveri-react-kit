@@ -3,6 +3,11 @@ import type { ReactNode } from 'react';
 export interface ShellNavItem {
     to: string;
     label: string;
+    /**
+     * What a phone's bottom bar says, where `label` is too long for a fifth of a phone: a Georgian word broken across
+     * two lines reads as two words. Everywhere else, and in More, the full label.
+     */
+    shortLabel?: string;
     /** Decoration beside the label, never instead of it. */
     icon: ReactNode;
     /** A count beside the label — an open queue, an unread inbox. */

@@ -85,3 +85,11 @@ Searching a panel's _data_ is that panel's own screen.
 `BarChart`, `Sparkline`, `Meter` and `StackedBar` are flexbox and one small SVG. A dashboard here plots one measure over
 some days, and a charting package for that is a bundle, a licence and an upgrade. Each keeps its values reachable
 without hovering, through a screen-reader table or a legend in words.
+
+## A phone's bar holds five, and More holds the rest (2026-11-12)
+
+`ProductShell` drew every destination along the bottom, so six of `hr-web`'s cut Georgian labels to stubs at 375 wide.
+Past five it keeps four and gathers the rest under **More**, a sheet above the bar that closes on Escape, on a tap
+outside it and on going anywhere. Its open state is the page it was opened on rather than a flag an effect resets.
+Labels take two lines instead of an ellipsis, and the tabs are top-aligned so a two-line label does not lift its icon.
+`?shell` in the gallery draws the frame with the fleet's longest labels.

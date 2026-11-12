@@ -99,3 +99,13 @@ Labels take two lines instead of an ellipsis, and the tabs are top-aligned so a 
 `Tabs` hides its scrollbar, fades whichever edge has more beyond it, and scrolls the selected tab into the row. Four
 Georgian tabs overflow a phone, and a tab opened from a link was otherwise off the screen with only a grey scrollbar
 saying anything was there. The row moves by `scrollLeft`, never `scrollIntoView`, which would scroll the page too.
+
+## A phone's bar says a short word, and the laptop bar starts at `lg` (2026-11-12)
+
+`ShellNavItem.shortLabel` is what the bottom bar shows where the label is longer than a fifth of a phone (67 pixels of
+text at 375 wide): `განვითარება` measured 77 and broke into two lines that read as two words. The full label stays
+everywhere else, More included. The laptop bar takes over at `lg` rather than `md`, because six Georgian labels at
+800 wide pushed the whole page sideways; above `lg` the bar scrolls quietly rather than do that.
+
+`Tabs` scrolls the selected tab into the row again whenever a tab changes size, because a tab grows when its font
+arrives, after the first layout, and the row's own box does not change when it does.

@@ -17,14 +17,20 @@ const icon = (
     </svg>
 );
 
-const ITEMS = ['მთავარი', 'დასწრება', 'შვებულება', 'განვითარება', 'ჩემი გუნდი', 'თანამშრომლები'].map(
-    (label, index) => ({
-        to: `/${index}`,
-        label,
-        icon,
-        badge: index === 4 ? 2 : undefined,
-    }),
-);
+/** Growth is the label too long for a fifth of a phone, so it carries the short word the bar shows instead. */
+const ITEMS = [
+    { label: 'მთავარი' },
+    { label: 'დასწრება' },
+    { label: 'შვებულებები', shortLabel: 'შვებულება' },
+    { label: 'განვითარება', shortLabel: 'ზრდა' },
+    { label: 'ჩემი გუნდი' },
+    { label: 'თანამშრომლები' },
+].map((names, index) => ({
+    to: `/${index}`,
+    ...names,
+    icon,
+    badge: index === 4 ? 2 : undefined,
+}));
 
 /** The product frame with Georgian labels, the longest the fleet ships, at `?shell`. */
 export function ShellPreview(): React.JSX.Element {

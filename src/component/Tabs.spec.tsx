@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Tabs } from './Tabs.js';
 
@@ -17,7 +17,35 @@ function layOut(row: HTMLElement): void {
     });
 }
 
+/** Stands in for the browser's observer, so a spec can say when the tabs changed size. */
+function captureResizes(): { fire: () => void } {
+    const callbacks: (() => void)[] = [];
+
+    vi.stubGlobal(
+        'ResizeObserver',
+        class {
+            constructor(callback: () => void) {
+                callbacks.push(callback);
+            }
+
+            observe = vi.fn();
+
+            disconnect = vi.fn();
+        },
+    );
+
+    return {
+        fire: () => {
+            for (const callback of callbacks) callback();
+        },
+    };
+}
+
 describe('Tabs', () => {
+    afterEach(() => {
+        vi.unstubAllGlobals();
+    });
+
     it('marks the selected tab and reports a choice', () => {
         let chosen = '';
 
@@ -52,5 +80,20 @@ describe('Tabs', () => {
         fireEvent.scroll(row);
 
         expect(row.className).toContain('black_calc(100%-2rem)');
+    });
+
+    it('keeps the selected tab in the row when the tabs grow after they were first laid out', () => {
+        const resizes = captureResizes();
+
+        render(<Tabs label="Growth" tabs={TABS} value="learning" onChange={() => undefined} />);
+        const row = screen.getByRole('tablist');
+
+        // Laid out before its font arrived, everything fitted and nothing needed scrolling.
+        expect(row.scrollLeft).toBe(0);
+
+        layOut(row);
+        resizes.fire();
+
+        expect(row.scrollLeft).toBe(272);
     });
 });

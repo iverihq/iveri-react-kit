@@ -37,7 +37,8 @@ function NavBadge({ children, className }: Readonly<{ children: ReactNode; class
 
 /**
  * The frame of a product a customer uses: a bar across the top on a laptop, tabs along the bottom
- * on a phone, where the thumb already is.
+ * on a phone or a tablet, where the thumb already is. The bar takes over at `lg`, because at `md` six Georgian
+ * labels were wider than the screen and pushed the whole page sideways; past that it scrolls rather than do so.
  *
  * `main` carries no padding, because a booking screen wants the map to reach the edges.
  */
@@ -75,7 +76,10 @@ export function ProductShell({
                             </>
                         )}
                     </Link>
-                    <nav aria-label={t('shell.section.workspace')} className="hidden items-center gap-1 md:flex">
+                    <nav
+                        aria-label={t('shell.section.workspace')}
+                        className="hidden min-w-0 items-center gap-1 overflow-x-auto [scrollbar-width:none] lg:flex [&::-webkit-scrollbar]:hidden"
+                    >
                         {barItems.map((item) => (
                             <NavLink
                                 key={item.to}
@@ -83,7 +87,7 @@ export function ProductShell({
                                 end={item.end}
                                 className={({ isActive }) =>
                                     cn(
-                                        'flex min-h-10 items-center gap-2 rounded-control px-3 text-label font-medium',
+                                        'flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-control px-3 text-label font-medium',
                                         'transition-colors duration-fast ease-standard',
                                         FOCUS_RING,
                                         isActive
@@ -115,7 +119,7 @@ export function ProductShell({
                     </div>
                 </div>
             </header>
-            <main className="min-w-0 flex-1 pb-20 md:pb-0">{children}</main>
+            <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>
             <PhoneTabs items={items} />
         </div>
     );
@@ -200,7 +204,7 @@ function PhoneTabs({ items }: Readonly<{ items: ShellNavItem[] }>): React.JSX.El
         <nav
             ref={root}
             aria-label={t('shell.section.workspace')}
-            className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface md:hidden"
+            className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface lg:hidden"
         >
             {isMoreOpen && (
                 <ul
@@ -235,7 +239,7 @@ function PhoneTabs({ items }: Readonly<{ items: ShellNavItem[] }>): React.JSX.El
                 {tabs.map((item) => (
                     <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => tabClass(isActive)}>
                         <TabIcon item={item} />
-                        <TabLabel>{item.label}</TabLabel>
+                        <TabLabel>{item.shortLabel ?? item.label}</TabLabel>
                     </NavLink>
                 ))}
                 {hasMore && (

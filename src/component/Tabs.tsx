@@ -44,6 +44,21 @@ function measure(row: HTMLElement): Overflow {
     };
 }
 
+/** Moves the row only, never the page: `scrollIntoView` would also scroll every ancestor. */
+function revealSelected(row: HTMLElement): void {
+    const selected = row.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (selected === null) return;
+
+    const start = selected.offsetLeft - row.offsetLeft;
+    const end = start + selected.offsetWidth;
+
+    if (start < row.scrollLeft) {
+        row.scrollLeft = start;
+    } else if (end > row.scrollLeft + row.clientWidth) {
+        row.scrollLeft = end - row.clientWidth;
+    }
+}
+
 /**
  * Sections of one page, on an underline.
  *
@@ -63,6 +78,10 @@ export function Tabs<TValue extends string>({
     const row = useRef<HTMLDivElement>(null);
     const [overflow, setOverflow] = useState<Overflow>({ hasBefore: false, hasAfter: false });
 
+    // Watches the tabs as well as the row: a tab grows when its font arrives, after the first layout, and the row's own
+    // box does not change when it does. A new set of tabs is watched afresh.
+    const tabKey = tabs.map((tab) => tab.value).join('\n');
+
     useEffect(() => {
         const element = row.current;
         if (element === null) return undefined;
@@ -74,10 +93,15 @@ export function Tabs<TValue extends string>({
                 current.hasBefore === next.hasBefore && current.hasAfter === next.hasAfter ? current : next,
             );
         };
+        const onResize = (): void => {
+            revealSelected(element);
+            update();
+        };
         // Absent only outside a browser, where nothing is laid out to overflow.
-        const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+        const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize);
 
         observer?.observe(element);
+        for (const tab of Array.from(element.children)) observer?.observe(tab);
         element.addEventListener('scroll', update, { passive: true });
         update();
 
@@ -85,22 +109,10 @@ export function Tabs<TValue extends string>({
             observer?.disconnect();
             element.removeEventListener('scroll', update);
         };
-    }, []);
+    }, [tabKey]);
 
-    // Moves the row only, never the page: `scrollIntoView` would also scroll every ancestor.
     useEffect(() => {
-        const element = row.current;
-        const selected = element?.querySelector<HTMLElement>('[aria-selected="true"]');
-        if (element === null || selected === null || selected === undefined) return;
-
-        const start = selected.offsetLeft - element.offsetLeft;
-        const end = start + selected.offsetWidth;
-
-        if (start < element.scrollLeft) {
-            element.scrollLeft = start;
-        } else if (end > element.scrollLeft + element.clientWidth) {
-            element.scrollLeft = end - element.clientWidth;
-        }
+        if (row.current !== null) revealSelected(row.current);
     }, [value]);
 
     const fade =

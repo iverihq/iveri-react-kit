@@ -17,10 +17,15 @@ interface TableProps {
  * replacements for the `<table>`/`<tr>`/`<td>` markup already in the panels, so a page adopts
  * them one table at a time — where a config-driven table would mean rewriting every page that
  * has one before any of it could ship.
+ *
+ * The wrapper is exactly as wide as its container and scrolls the table itself. It must never
+ * be wider: the theme also lets a panel body scroll sideways (`main section > div`), so a
+ * wrapper that overhangs by even a pixel (`-mx-px` once did) makes that body overflow too and
+ * draws a second, empty scrollbar under every table.
  */
 export function Table({ children, caption, className }: Readonly<TableProps>): React.JSX.Element {
     return (
-        <div className="-mx-px overflow-x-auto">
+        <div className="overflow-x-auto">
             <table className={cn('w-full border-collapse text-left text-small', className)}>
                 {caption !== undefined && <caption className="sr-only">{caption}</caption>}
                 {children}

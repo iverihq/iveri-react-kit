@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router';
 
 import { cn } from '../common/index.js';
 import { FOCUS_RING } from '../component/Button.js';
+import { LONG_WORDS } from '../component/long-words.js';
 import { useTranslation } from '../i18n/use-translation.js';
 
 import { findActiveItem, type ShellNavItem, type ShellUser } from './shell-navigation.js';
@@ -139,10 +140,15 @@ const tabClass = (isActive: boolean): string =>
         isActive ? 'text-accent' : 'text-muted',
     );
 
-/** Two lines rather than an ellipsis: a Georgian word cut short is a different word. */
-function TabLabel({ children }: Readonly<{ children: ReactNode }>): React.JSX.Element {
+/**
+ * Two lines rather than an ellipsis: a Georgian word cut short is a different word. Breaks fall between words, never
+ * inside one that fits a line; a label that needs more than that wants a `shortLabel`.
+ */
+function TabLabel({ children }: Readonly<{ children: string }>): React.JSX.Element {
     return (
-        <span className="line-clamp-2 max-w-full text-center leading-tight [overflow-wrap:anywhere]">{children}</span>
+        <span title={children} className={cn('line-clamp-2 max-w-full text-center leading-tight', LONG_WORDS)}>
+            {children}
+        </span>
     );
 }
 

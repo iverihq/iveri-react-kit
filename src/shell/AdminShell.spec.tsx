@@ -54,6 +54,18 @@ describe('AdminShell', () => {
         expect(screen.getByText('3')).toBeTruthy();
     });
 
+    it('wraps a long label rather than cutting it off with an ellipsis', () => {
+        // jsdom measures nothing, so this pins the rule rather than the pixels: a Georgian word cut short is a
+        // different word, and the sidebar, the header and the account button are where long names land.
+        renderShell();
+        fireEvent.click(screen.getByRole('button', { name: 'shell.account' }));
+
+        expect(document.querySelector('.truncate')).toBeNull();
+        expect(document.querySelector('[class*="text-ellipsis"]')).toBeNull();
+        expect(screen.getAllByTitle('Nino Beridze').length).toBeGreaterThan(0);
+        expect(screen.getByTitle('Commerce')).toBeTruthy();
+    });
+
     it('opens the search box with the keyboard and narrows it to what is typed', () => {
         renderShell();
 

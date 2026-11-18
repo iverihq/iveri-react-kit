@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { cn } from '../common/index.js';
 import { Avatar } from '../component/Avatar.js';
 import { FOCUS_RING } from '../component/Button.js';
+import { LONG_WORDS } from '../component/long-words.js';
 import { LocaleSelect } from '../i18n/LocaleSelect.js';
 import { useTranslation } from '../i18n/use-translation.js';
 
@@ -63,7 +64,13 @@ export function UserMenu({ user, links = [], onSignOut }: Readonly<UserMenuProps
                 )}
             >
                 <Avatar name={user.name} imageUrl={user.imageUrl} size="sm" />
-                <span className="hidden max-w-36 truncate text-label font-medium text-ink-soft lg:block">
+                <span
+                    title={user.name}
+                    className={cn(
+                        'hidden max-w-40 text-left text-label font-medium leading-tight text-ink-soft lg:line-clamp-2',
+                        LONG_WORDS,
+                    )}
+                >
                     {user.name}
                 </span>
                 <ChevronIcon
@@ -75,9 +82,9 @@ export function UserMenu({ user, links = [], onSignOut }: Readonly<UserMenuProps
                     <div className="flex items-center gap-3 border-b border-line p-4">
                         <Avatar name={user.name} imageUrl={user.imageUrl} />
                         <div className="min-w-0">
-                            <p className="truncate text-label font-semibold text-ink">{user.name}</p>
+                            <p className={cn('text-label font-semibold text-ink', LONG_WORDS)}>{user.name}</p>
                             {user.detail !== undefined && (
-                                <p className="truncate text-small text-muted">{user.detail}</p>
+                                <p className="text-small text-muted [overflow-wrap:anywhere]">{user.detail}</p>
                             )}
                         </div>
                     </div>

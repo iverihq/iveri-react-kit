@@ -20,6 +20,24 @@ consumer's own direct dependency satisfies it — never as a plain dependency.
 **Check `pnpm ls @iveri/contracts --depth 2` in a consumer after any release here.** One copy at
 the top level and nothing nested is correct.
 
+## `/licence`: the one entry point that reads a contract type (2026-11-18)
+
+`@iveri/react-kit/licence` carries `LicenceBadge`, `LicencePanel` and `licenceStanding`, for the ten product
+backoffices: each shows a company's licence for its product in the companies list and on the company's page. **Nine
+had written it nine times**, under five file names, and had drifted: some showed seats and some did not, none said a
+licence was about to end. Billing's `LicenceStatus` decides the words, so this is where the rule above applies:
+`@iveri/contracts` is a **peer**, optional, and only this entry point imports it — `verify-package.mjs` proving
+`dist/index.js` loads without it is what keeps the root free of it. A consumer that imports `/licence` already depends
+on contracts directly, which satisfies the peer; `pnpm ls @iveri/contracts --depth 2` must still show one copy.
+
+- **Strings are `web-shell`'s `shell.licence.*`**, like the password-reset forms: ten backoffices saying the same five
+  states in three languages is thirty chances to read differently.
+- **"Ending" is the one thing it adds to billing's status**: a live licence within 30 days of its last day, the same
+  window `iveri-backoffice-web` marks. Only a live licence is green; ending and ended are amber and told apart by their
+  words; cancelled is grey, a decision rather than a failure. Days are UTC calendar days, formatted in UTC.
+- **It only shows.** A licence is changed in `iveri-backoffice-web`; `LicencePanel`'s `actions` slot is where an app
+  puts the link there.
+
 ## `@iveri/tokens` is a **build-time** dependency since 0.9.0 (2026-11-06)
 
 Until 0.8.0 it was a runtime dependency, because `tailwind-preset.cjs` required it when a

@@ -179,6 +179,9 @@ importers:
         specifier: ^12.1.4
         version: 12.1.4
     devDependencies:
+      '@iveri/contracts':
+        specifier: ^0.100.0
+        version: 0.100.0
       '@iveri/eslint-config':
         specifier: ^0.2.3
         version: 0.2.3(@typescript-eslint/utils@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10(supports-color@7.2.0))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
@@ -422,6 +425,10 @@ packages:
 
   '@isaacs/nonrecursive-glob-match@1.0.3':
     resolution: {integrity: sha512-SI7kyKHq4XXDRozw+r9GlRZkia1ZkFrpLW98r2IC2Bpr8YkFGE3fvjzmxCG0x78A++69HmDNrDvSMYBZmHGpKA==}
+
+  '@iveri/contracts@0.100.0':
+    resolution: {integrity: sha512-CRxo3ue1qE0Bmu7sNXwaKzywLmS2/EHEt+weqIfLbRFhC518UYhJF4yCR7MpPdgJQdcN9ZDCwDMObtLeOWURZw==}
+    engines: {node: '>=26'}
 
   '@iveri/eslint-config@0.2.3':
     resolution: {integrity: sha512-YNAgo3BBewpNLqgJATvG2GiOso+iEtI85zqIHauhgCULRWwUN+BFZ+nlUXV3yM9Bh/R5oMgvYXTme4T3w5HNcA==}
@@ -2475,6 +2482,8 @@ snapshots:
   '@humanwhocodes/retry@0.4.3': {}
 
   '@isaacs/nonrecursive-glob-match@1.0.3': {}
+
+  '@iveri/contracts@0.100.0': {}
 
   '@iveri/eslint-config@0.2.3(@typescript-eslint/utils@8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10(supports-color@7.2.0))(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:

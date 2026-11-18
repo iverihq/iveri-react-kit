@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 
 import { cn } from '../common/index.js';
+import { LONG_WORDS } from '../component/long-words.js';
 import { useTranslation } from '../i18n/use-translation.js';
 
 import { CommandPalette } from './CommandPalette.js';
@@ -134,7 +135,10 @@ export function AdminShell({
                     </span>
                     <span className={cn('min-w-0', isCollapsed && 'lg:hidden')}>
                         <span className="block text-2xs font-medium uppercase tracking-wider text-white/55">Iveri</span>
-                        <span className="block truncate font-display text-body font-semibold leading-5">
+                        <span
+                            title={productName}
+                            className={cn('line-clamp-2 font-display text-body font-semibold leading-5', LONG_WORDS)}
+                        >
                             {productName}
                         </span>
                     </span>
@@ -149,6 +153,7 @@ export function AdminShell({
                                 <span
                                     className={cn(
                                         'px-3 pb-1.5 text-2xs font-semibold uppercase tracking-wider text-white/45',
+                                        LONG_WORDS,
                                         isCollapsed && 'lg:hidden',
                                     )}
                                 >
@@ -204,12 +209,22 @@ export function AdminShell({
                     <div className="flex min-w-0 items-center gap-1.5 text-label">
                         {active?.section.label !== undefined && (
                             <>
-                                <span className="hidden truncate text-muted sm:block">{active.section.label}</span>
+                                <span
+                                    title={active.section.label}
+                                    className={cn('hidden leading-tight text-muted sm:line-clamp-2', LONG_WORDS)}
+                                >
+                                    {active.section.label}
+                                </span>
                                 <ChevronIcon className="hidden h-3.5 w-3.5 shrink-0 text-faint sm:block" />
                             </>
                         )}
                         {active !== null && (
-                            <span className="truncate font-semibold text-ink">{active.item.label}</span>
+                            <span
+                                title={active.item.label}
+                                className={cn('line-clamp-2 font-semibold leading-tight text-ink', LONG_WORDS)}
+                            >
+                                {active.item.label}
+                            </span>
                         )}
                     </div>
                     <div className="ml-auto flex items-center gap-2">
@@ -270,7 +285,9 @@ function ShellLink({
             }
         >
             <span className="shrink-0">{item.icon}</span>
-            <span className={cn('min-w-0 flex-1 truncate', isCollapsed && 'lg:hidden')}>{item.label}</span>
+            <span className={cn('min-w-0 flex-1 py-2 leading-snug', LONG_WORDS, isCollapsed && 'lg:hidden')}>
+                {item.label}
+            </span>
             {item.badge !== undefined && (
                 <span
                     className={cn(

@@ -94,6 +94,21 @@ describe('PasswordResetRequestForm', () => {
 
         expect(screen.queryByLabelText('shell.password-reset.workspace')).toBeNull();
     });
+
+    it('asks for the workspace in its intro only where it shows the field', () => {
+        withLocale(
+            <PasswordResetRequestForm tenantSlug="acme" onSubmit={vi.fn()} backToSignIn={<a href="/login">back</a>} />,
+        );
+
+        expect(screen.getByText('shell.password-reset.request.intro-email-only')).toBeTruthy();
+        expect(screen.queryByText('shell.password-reset.request.intro')).toBeNull();
+    });
+
+    it('names the workspace in its intro where it asks for one', () => {
+        withLocale(<PasswordResetRequestForm onSubmit={vi.fn()} backToSignIn={<a href="/login">back</a>} />);
+
+        expect(screen.getByText('shell.password-reset.request.intro')).toBeTruthy();
+    });
 });
 
 describe('PasswordResetConfirmForm', () => {

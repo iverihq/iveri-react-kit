@@ -127,3 +127,17 @@ everywhere else, More included. The laptop bar takes over at `lg` rather than `m
 
 `Tabs` scrolls the selected tab into the row again whenever a tab changes size, because a tab grows when its font
 arrives, after the first layout, and the row's own box does not change when it does.
+
+## A long label wraps; nothing in a shell is cut with an ellipsis (2026-11-18)
+
+Long Georgian and Russian navigation labels, product names and people's names were cut with `truncate` in
+`AdminShell`'s sidebar, its header and the account button. A Georgian word cut short reads as a different word, so they
+now wrap between words through `LONG_WORDS` (`component/long-words.ts`): `overflow-wrap: break-word` plus
+`hyphens: auto`, so a single word wider than its line is hyphenated where the browser knows the language rather than
+spilling out. Where height is fixed (the 64-pixel header, the account button, a phone tab) a label takes two lines and
+carries its full text in `title`. The phone tabs used `overflow-wrap: anywhere`, which broke a word that fit; they take
+`LONG_WORDS` too, and a label that needs more still wants a `shortLabel`. `?shell=admin` in the gallery draws the admin
+frame with the fleet's longest labels, and a spec refuses `truncate` anywhere in the shell.
+
+`PasswordResetRequestForm` says `shell.password-reset.request.intro-email-only` where the app passes `tenantSlug` and the
+workspace field is hidden: the plain intro asked for a workspace the page did not show.

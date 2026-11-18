@@ -24,6 +24,7 @@ interface PasswordResetRequestFormProps {
 
 /**
  * "Forgot password": a workspace and an email, then one sentence that is true whether or not they match an account.
+ * Where the app already knows the workspace the field is not shown, and the intro asks for the email alone.
  *
  * Presentational, like `SignInLayout`: each app sends the request with its own client. Strings are the `web-shell`
  * namespace's `shell.password-reset.*`.
@@ -60,7 +61,11 @@ export function PasswordResetRequestForm({
 
     return (
         <form className="flex flex-col gap-5" onSubmit={submit} noValidate={false}>
-            <p className="text-body text-muted">{t('shell.password-reset.request.intro')}</p>
+            <p className="text-body text-muted">
+                {tenantSlug === undefined
+                    ? t('shell.password-reset.request.intro')
+                    : t('shell.password-reset.request.intro-email-only')}
+            </p>
             {tenantSlug === undefined && (
                 <TextField
                     label={t('shell.password-reset.workspace')}

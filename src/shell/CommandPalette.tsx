@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { cn } from '../common/index.js';
+import { LONG_WORDS } from '../component/long-words.js';
 import { useTranslation } from '../i18n/use-translation.js';
 
 import { SearchIcon } from './shell-icons.js';
@@ -106,7 +107,7 @@ export function CommandPalette({ sections, commands, onClose }: Readonly<Command
                                     )}
                                 >
                                     {command.icon !== undefined && <span className="shrink-0">{command.icon}</span>}
-                                    <span className="min-w-0 flex-1 truncate">{command.label}</span>
+                                    <span className={cn('min-w-0 flex-1', LONG_WORDS)}>{command.label}</span>
                                     {command.group !== undefined && (
                                         <span className="shrink-0 text-caption text-faint">{command.group}</span>
                                     )}

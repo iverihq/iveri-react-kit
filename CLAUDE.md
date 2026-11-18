@@ -141,3 +141,10 @@ frame with the fleet's longest labels, and a spec refuses `truncate` anywhere in
 
 `PasswordResetRequestForm` says `shell.password-reset.request.intro-email-only` where the app passes `tenantSlug` and the
 workspace field is hidden: the plain intro asked for a workspace the page did not show.
+
+## Rows of buttons wrap at phone width (2026-11-18)
+
+`PageHeader`'s and `Panel`'s actions and `SegmentedControl` were `shrink-0` rows that never wrapped: two Russian actions,
+or four Russian segments with counts, were wider than a phone and pushed the whole page sideways (HR's people, attendance
+and expenses pages at 375 wide). Each now takes `max-w-full` and `flex-wrap`, so it keeps its own line and wraps within
+it. A segmented control wraps onto a second row rather than scrolling, so no option is out of sight.

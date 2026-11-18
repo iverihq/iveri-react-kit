@@ -39,7 +39,11 @@ export function PageHeader({
                     <h1 className="font-display text-h1 font-bold text-ink">{title}</h1>
                     {description !== undefined && <p className="max-w-2xl text-body text-muted">{description}</p>}
                 </div>
-                {actions !== undefined && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+                {actions !== undefined && (
+                    // `max-w-full` lets the buttons wrap among themselves once they have a line of their own: two
+                    // Russian actions side by side are wider than a phone, and `shrink-0` alone pushed the page sideways.
+                    <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2">{actions}</div>
+                )}
             </div>
             {toolbar !== undefined && <div className="flex flex-wrap items-end gap-3">{toolbar}</div>}
         </header>

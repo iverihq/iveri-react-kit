@@ -141,6 +141,7 @@ checkbox so the base layer is proved rather than assumed.
 ```text
 Avatar  Badge  Button  CheckboxField  EmptyState  Field  PageHeader  Panel  SegmentedControl
 SelectField  Skeleton  SkeletonText  Spinner  StatCard  Table  TextAreaField  TextField
+SignInLayout  PasswordResetRequestForm  PasswordResetConfirmForm
 initialsOf  cn  FOCUS_RING
 ```
 
@@ -158,6 +159,16 @@ Three rules the components encode, each with a spec:
   no colour at all.
 - **`SegmentedControl` is a radio group**, so arrow keys move through it and a screen reader
   announces the position — behaviour a row of buttons does not have and would have to fake.
+
+### Forgot password (0.26.0)
+
+`SignInLayout` takes `forgotPasswordHref` (and `onForgotPassword`, to navigate with the app's router) and shows
+"Forgot password?" under the form only when given. `PasswordResetRequestForm` asks for the workspace and the email and
+then says the same sentence whatever the account, because `POST /auth/password-reset` reveals nobody;
+`PasswordResetConfirmForm` is the page the email opens (`/reset-password?workspace=&token=`), refuses two passwords
+that differ or one under `PASSWORD_MIN_LENGTH` before sending, and ends on "every session has ended". Both are
+presentational: the app sends the two requests with its own identity client. Strings are `web-shell`'s
+`shell.password-reset.*`, so an app re-pulls that namespace when it adopts them.
 
 ## Session refresh
 

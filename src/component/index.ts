@@ -7,6 +7,8 @@ export * from './Field.js';
 export * from './PageHeader.js';
 export * from './Pagination.js';
 export * from './Panel.js';
+export * from './PasswordResetConfirmForm.js';
+export * from './PasswordResetRequestForm.js';
 export * from './SearchField.js';
 export * from './SegmentedControl.js';
 export * from './SignInLayout.js';

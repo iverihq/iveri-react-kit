@@ -1,4 +1,8 @@
-import { useId, type ReactNode } from 'react';
+import { useId, type MouseEvent, type ReactNode } from 'react';
+
+import { useTranslation } from '../i18n/use-translation.js';
+
+import { FOCUS_RING } from './Button.js';
 
 interface SignInLayoutProps {
     productName: string;
@@ -13,6 +17,13 @@ interface SignInLayoutProps {
     /** The page's heading, above the form. */
     heading: string;
     children: ReactNode;
+    /**
+     * Where "Forgot password?" leads, under the form. Absent, no link: a page that cannot reset a password must not
+     * offer to. Every app's reset pages are the kit's `PasswordResetRequestForm` and `PasswordResetConfirmForm`.
+     */
+    forgotPasswordHref?: string;
+    /** Called instead of following the link, so an app with a router navigates without a reload. */
+    onForgotPassword?: () => void;
 }
 
 function Brand({ productName }: Readonly<{ productName: string }>): React.JSX.Element {
@@ -23,6 +34,33 @@ function Brand({ productName }: Readonly<{ productName: string }>): React.JSX.El
             </span>
             <span className="font-display text-h3 font-bold">{productName}</span>
         </div>
+    );
+}
+
+/** Its own component so the layout reads no catalogue unless it shows the link. */
+function ForgotPasswordLink({
+    href,
+    onFollow,
+}: Readonly<{ href: string; onFollow: (() => void) | undefined }>): React.JSX.Element {
+    const { t } = useTranslation();
+
+    const follow = (event: MouseEvent<HTMLAnchorElement>): void => {
+        if (onFollow === undefined) return;
+
+        event.preventDefault();
+        onFollow();
+    };
+
+    return (
+        <p className="mt-4 text-center text-label">
+            <a
+                href={href}
+                onClick={follow}
+                className={`rounded-xs font-medium text-accent hover:underline ${FOCUS_RING}`}
+            >
+                {t('shell.password-reset.link')}
+            </a>
+        </p>
     );
 }
 
@@ -40,6 +78,8 @@ export function SignInLayout({
     strapline,
     heading,
     children,
+    forgotPasswordHref,
+    onForgotPassword,
 }: Readonly<SignInLayoutProps>): React.JSX.Element {
     const patternId = useId();
 
@@ -67,6 +107,9 @@ export function SignInLayout({
                     <div className="mt-6 rounded-panel border border-line bg-surface p-6 shadow-md sm:p-8">
                         {children}
                     </div>
+                    {forgotPasswordHref !== undefined && (
+                        <ForgotPasswordLink href={forgotPasswordHref} onFollow={onForgotPassword} />
+                    )}
                 </div>
             </div>
         </main>

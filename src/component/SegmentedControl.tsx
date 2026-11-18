@@ -42,7 +42,12 @@ export function SegmentedControl<TValue extends string>({
         <div
             role="radiogroup"
             aria-label={label}
-            className={cn('inline-flex items-center gap-1 rounded-control border border-line bg-sunken p-1', className)}
+            className={cn(
+                // Wraps onto a second row rather than past the screen: four Russian segments with counts are wider than
+                // a phone, and every option stays in view, which a scrolling strip would not promise.
+                'inline-flex max-w-full flex-wrap items-center gap-1 rounded-control border border-line bg-sunken p-1',
+                className,
+            )}
         >
             {segments.map((segment) => {
                 const isSelected = segment.value === value;

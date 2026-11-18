@@ -42,7 +42,9 @@ export function Panel({
                         )}
                         {description !== undefined && <p className="text-small text-muted">{description}</p>}
                     </div>
-                    {actions !== undefined && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+                    {actions !== undefined && (
+                        <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2">{actions}</div>
+                    )}
                 </header>
             )}
             <div className={isFlush ? '' : 'p-5'}>{children}</div>

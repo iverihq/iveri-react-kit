@@ -7,12 +7,16 @@ The Iveri design foundation and the shared React primitives every panel is built
 ```text
 @iveri/react-kit            the components and the i18n runtime, as native ES modules
 @iveri/react-kit/map        RouteMap, a map of a route's stops. `maplibre-gl` is an optional peer
+@iveri/react-kit/shell      AdminShell and ProductShell. `react-router` is an optional peer
+@iveri/react-kit/licence    LicenceBadge and LicencePanel, a company's product licence in a
+                            product backoffice. `@iveri/contracts` is an optional peer
 @iveri/react-kit/theme.css  the Tailwind 4 theme: typefaces, tokens, type scale, elevation,
                             motion and the base layer
 ```
 
-It depends on `@iveri/contracts` **never** — see `CLAUDE.md` for why that is a rule rather than
-a coincidence — and on `@iveri/nest-sdk` never. Its only runtime dependencies are the three
+It depends on `@iveri/contracts` only as an **optional peer**, reached from `/licence` alone, so
+the root never needs it and a consumer's own copy is the only one installed — see `CLAUDE.md` —
+and on `@iveri/nest-sdk` never. Its only runtime dependencies are the three
 self-hosted font packages the theme imports and `intl-messageformat`. React 19 is the peer.
 
 ## Adopting it in an app

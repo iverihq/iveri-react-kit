@@ -148,3 +148,11 @@ workspace field is hidden: the plain intro asked for a workspace the page did no
 or four Russian segments with counts, were wider than a phone and pushed the whole page sideways (HR's people, attendance
 and expenses pages at 375 wide). Each now takes `max-w-full` and `flex-wrap`, so it keeps its own line and wraps within
 it. A segmented control wraps onto a second row rather than scrolling, so no option is out of sight.
+
+## Money and usage formatting live here (2026-11-20)
+
+`formatMoney`, `fromMinorUnits`, `toMinorUnits` and the usage-figure helpers (`src/format/`) were **copied byte for byte
+into six tenant panels** and again into Conduit's two panels and Baasi's console, and `commerce-tenant-admin-web`'s copy
+divided by 100 for every currency. They are in the root because they are plain `Intl` and read no contract:
+`monthFigures` takes a structural `UsageMonthFigures`, so the root still loads without `@iveri/contracts`. The phone
+apps keep their own copies, because this package peers on `react-dom`.

@@ -174,6 +174,23 @@ that differ or one under `PASSWORD_MIN_LENGTH` before sending, and ends on "ever
 presentational: the app sends the two requests with its own identity client. Strings are `web-shell`'s
 `shell.password-reset.*`, so an app re-pulls that namespace when it adopts them.
 
+## Money and usage figures (0.29.0)
+
+```text
+formatMoney  fromMinorUnits  toMinorUnits  minorDigits
+usageMeterTone  monthFigures  formatCount  formatUsageMonth  formatBytes
+```
+
+Every amount in the fleet is held in **minor units**, and `formatMoney` divides by the minor unit the currency
+actually has, asked of `Intl`: the yen has none and the Kuwaiti dinar has three, so a fixed 100 is wrong both ways.
+`toMinorUnits` reads a typed price as text, never through a float, and accepts a comma as the decimal separator.
+
+The usage helpers are what a page showing a company's metered months needs: `monthFigures` gives every metric the page
+knows a figure in the page's order (0 where billing has no row, unknown metrics skipped), and `usageMeterTone` is calm
+until four fifths of a limit, a warning after, and critical at the limit only with `refusesOverLimit` — Baasi refuses
+over a plan, Conduit does not. The metric and invoice-status tables stay in each app, because their words are that
+app's.
+
 ## Session refresh
 
 `createSessionRefresh` builds the one function an app refreshes its session through, and

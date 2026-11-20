@@ -253,3 +253,25 @@
         }
     }
 }
+
+/*
+ * Every single-choice dropdown draws the same arrow, ours rather than the browser's.
+ *
+ * The native one is a few pixels wide and sits against the right edge whatever padding the control has, so
+ * it read as a mistake in every panel and site, and differently on every platform. The chevron is
+ * `--color-muted` (a data URI cannot read a custom property, so the value is written out; the design
+ * foundation spec keeps it equal to the token) and always has 2.5rem of room.
+ *
+ * **Outside any layer on purpose.** Unlayered declarations beat every layer, utilities included, so a
+ * `px-3` or `pr-8` on a hand-written select cannot put text under the arrow. Only the background's
+ * longhands are set, so a control keeps whatever background colour it was given. A list box
+ * (`multiple`, or a visible `size`) has no arrow and is left alone.
+ */
+select:not([multiple], [size]) {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%235c6579' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem 1rem;
+    padding-right: 2.5rem;
+}

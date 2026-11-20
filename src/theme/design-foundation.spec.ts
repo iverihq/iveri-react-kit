@@ -102,4 +102,15 @@ describe('design foundation', () => {
             expect(declared(tokensCss, `--color-${name}`), name).toBeDefined();
         }
     });
+
+    it('draws every dropdown arrow in the muted colour, outside the layers so no utility can cover it', () => {
+        // A data URI cannot read a custom property, so the chevron's colour is written out; this keeps
+        // it the token's value. Unlayered is what stops a `px-3` putting text under the arrow.
+        const arrow = /^select:not\(\[multiple\], \[size\]\) \{([^}]*)\}/m.exec(themeCss);
+        expect(arrow, 'the select rule, unlayered at the start of a line').not.toBeNull();
+        const muted = declared(tokensCss, '--color-muted')?.replace('#', '%23');
+        expect(arrow?.[1]).toContain(`stroke='${muted}'`);
+        expect(arrow?.[1]).toContain('appearance: none;');
+        expect(arrow?.[1]).toContain('padding-right: 2.5rem;');
+    });
 });

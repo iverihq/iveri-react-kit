@@ -141,7 +141,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectProps>(function S
                     id={controlId}
                     aria-invalid={hasError}
                     aria-describedby={descriptionId}
-                    className={cn(CONTROL_CLASS, 'pr-8', hasError ? 'border-critical' : 'border-line')}
+                    className={cn(CONTROL_CLASS, hasError ? 'border-critical' : 'border-line')}
                     {...rest}
                 >
                     {placeholder !== undefined && <option value="">{placeholder}</option>}

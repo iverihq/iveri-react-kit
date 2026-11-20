@@ -156,3 +156,13 @@ into six tenant panels** and again into Conduit's two panels and Baasi's console
 divided by 100 for every currency. They are in the root because they are plain `Intl` and read no contract:
 `monthFigures` takes a structural `UsageMonthFigures`, so the root still loads without `@iveri/contracts`. The phone
 apps keep their own copies, because this package peers on `react-dom`.
+
+## Every dropdown draws the kit's arrow (2026-11-20)
+
+The browser's own select arrow is a few pixels wide and sits against the right edge whatever padding the control has,
+so every dropdown in every app looked wrong, and differently per platform. `styles/theme.css` ends with one
+**unlayered** rule for `select:not([multiple], [size])`: `appearance: none`, a 16-pixel chevron in `--color-muted` placed
+0.75rem from the edge, and 2.5rem of right padding. Unlayered beats every Tailwind layer, so a hand-written select's
+`px-3` cannot put text under the arrow, and it reaches all 34 web apps through the theme rather than through
+`SelectField`. Only the background longhands are set, so a control keeps its own background colour. The chevron's colour
+is written into the data URI (a URI cannot read a custom property); `design-foundation.spec.ts` keeps it the token's.

@@ -166,3 +166,13 @@ so every dropdown in every app looked wrong, and differently per platform. `styl
 `px-3` cannot put text under the arrow, and it reaches all 34 web apps through the theme rather than through
 `SelectField`. Only the background longhands are set, so a control keeps its own background colour. The chevron's colour
 is written into the data URI (a URI cannot read a custom property); `design-foundation.spec.ts` keeps it the token's.
+
+## A map's controls speak the page's language (2026-11-21)
+
+MapLibre names its canvas, its zoom buttons and its attribution toggle in English unless it is given a `locale`, so a
+Russian or Georgian page announced "Map", "Zoom in" and "Toggle attribution" to a screen reader. `RouteMap` now reads
+those names from `web-shell`'s `shell.map.*` (`map-control-labels.ts`), like the shells, so an app gets them by pulling
+`web-shell` with no code. That means **`RouteMap` needs a `LocaleProvider` above it**, as the shells do. A key the
+catalogue lacks is left out rather than rendered as itself: these are accessible names nobody sees, so a raw key would
+only ever reach a screen reader, and MapLibre's English is the better fallback. MapLibre reads its labels only when the
+map is created, so changing the language rebuilds the map.

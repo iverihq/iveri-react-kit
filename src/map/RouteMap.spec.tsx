@@ -1,5 +1,8 @@
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, type RenderResult } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { LocaleProvider } from '../i18n/LocaleProvider.js';
 
 import { RouteMap } from './RouteMap.js';
 
@@ -56,12 +59,38 @@ vi.mock('maplibre-gl/dist/maplibre-gl-worker.mjs?url', () => ({ default: '/asset
 const STYLE = 'https://tiles.example.test/style.json';
 const CENTER = { latitude: 41.7, longitude: 44.8 };
 const STOP = { id: 'pickup', latitude: 41.71, longitude: 44.82, color: '#000' };
+const CATALOG = {
+    generatedAt: '2026-11-21T00:00:00.000Z',
+    sourceLocale: 'en',
+    versions: {},
+    locales: [{ code: 'ru', englishName: 'Russian', nativeName: 'Русский' }],
+    messages: { ru: { 'shell.map.title': 'Карта', 'shell.map.zoom-in': 'Приблизить' } },
+};
+
+function Translated({ children }: { children: ReactNode }): React.JSX.Element {
+    return (
+        <LocaleProvider catalog={CATALOG} initialLocale="ru">
+            {children}
+        </LocaleProvider>
+    );
+}
+
+const renderMap = (map: React.JSX.Element): RenderResult => render(map, { wrapper: Translated });
 
 describe('a route map', () => {
     beforeEach(() => vi.clearAllMocks());
 
+    it("names MapLibre's controls in the page's language, and leaves a label the catalogue lacks to MapLibre", async () => {
+        renderMap(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
+
+        await waitFor(() => expect(library.Map).toHaveBeenCalled());
+        expect(library.Map).toHaveBeenCalledWith(
+            expect.objectContaining({ locale: { 'Map.Title': 'Карта', 'NavigationControl.ZoomIn': 'Приблизить' } }),
+        );
+    });
+
     it('opens the style it was given, longitude first', async () => {
-        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.Map).toHaveBeenCalled());
         expect(library.Map.mock.calls[0]).toEqual([expect.objectContaining({ style: STYLE, center: [44.8, 41.7] })]);
@@ -72,7 +101,7 @@ describe('a route map', () => {
             'matchMedia',
             vi.fn(() => ({ matches: true })),
         );
-        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} insetLeft={456} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} insetLeft={456} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.map.setPadding).toHaveBeenCalledWith({ left: 456 }));
         vi.unstubAllGlobals();
@@ -83,7 +112,7 @@ describe('a route map', () => {
             'matchMedia',
             vi.fn(() => ({ matches: false })),
         );
-        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} insetLeft={456} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} insetLeft={456} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.Map).toHaveBeenCalled());
         expect(library.map.setPadding).not.toHaveBeenCalled();
@@ -91,13 +120,13 @@ describe('a route map', () => {
     });
 
     it('tells MapLibre where a bundler put its worker', async () => {
-        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.setWorkerUrl).toHaveBeenCalledWith('/assets/worker.mjs'));
     });
 
     it('puts a marker on each stop once the map has loaded', async () => {
-        render(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.handlers.has('load')).toBe(true));
         library.handlers.get('load')?.({});
@@ -107,7 +136,7 @@ describe('a route map', () => {
     });
 
     it('zooms in on a lone stop when there is nothing to place', async () => {
-        render(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.handlers.has('load')).toBe(true));
         library.handlers.get('load')?.({});
@@ -116,7 +145,7 @@ describe('a route map', () => {
     });
 
     it('keeps the view while somebody is placing stops they can already see', async () => {
-        render(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} onPick={vi.fn()} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[STOP]} center={CENTER} onPick={vi.fn()} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.handlers.has('load')).toBe(true));
         library.handlers.get('load')?.({});
@@ -127,7 +156,7 @@ describe('a route map', () => {
     it('reports where somebody tapped', async () => {
         const onPick = vi.fn();
 
-        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} onPick={onPick} ariaLabel="Map" />);
+        renderMap(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} onPick={onPick} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.handlers.has('click')).toBe(true));
         library.handlers.get('click')?.({ lngLat: { lat: 41.5, lng: 44.5 } });
@@ -136,7 +165,7 @@ describe('a route map', () => {
     });
 
     it('takes the map down with it', async () => {
-        const { unmount } = render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
+        const { unmount } = renderMap(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} ariaLabel="Map" />);
 
         await waitFor(() => expect(library.Map).toHaveBeenCalled());
         unmount();
@@ -150,7 +179,9 @@ describe('a route map', () => {
         library.Map.mockImplementationOnce(function failToCreateMap(): never {
             throw new Error('WebGL is off');
         });
-        render(<RouteMap styleUrl={STYLE} stops={[]} center={CENTER} onUnavailable={onUnavailable} ariaLabel="Map" />);
+        renderMap(
+            <RouteMap styleUrl={STYLE} stops={[]} center={CENTER} onUnavailable={onUnavailable} ariaLabel="Map" />,
+        );
 
         await waitFor(() => expect(onUnavailable).toHaveBeenCalledOnce());
     });

@@ -3,7 +3,9 @@ import type * as MapLibreModule from 'maplibre-gl';
 import { useEffect, useRef } from 'react';
 
 import { cn } from '../common/index.js';
+import { useTranslation } from '../i18n/use-translation.js';
 
+import { mapControlLabels } from './map-control-labels.js';
 import { boundsOf, routeLine, toLngLat, type MapPoint, type RouteMapStop } from './route-map.util.js';
 
 const ROUTE_SOURCE = 'iveri-route';
@@ -24,6 +26,10 @@ type MapLibre = typeof MapLibreModule;
  * **The style URL is the caller's**, since which tile provider serves a deployment is a decision
  * about cost and terms rather than about this component. An app with no URL configured should not
  * render this at all and keeps whatever it offered before.
+ *
+ * **Its controls speak the page's language.** MapLibre's buttons and canvas are named from the app's
+ * `web-shell` catalogue, so like the shells it needs a `LocaleProvider` above it. Changing the
+ * language rebuilds the map, because MapLibre reads its labels only when it is created.
  *
  * `onUnavailable` is called when a browser cannot draw it, which is a real case rather than a
  * theoretical one: WebGL is off on some managed machines and in some remote desktops.
@@ -63,10 +69,13 @@ export function RouteMap({
     const onPickRef = useRef(onPick);
     const onUnavailableRef = useRef(onUnavailable);
     const initialView = useRef({ center, zoom, insetLeft });
+    const { t, locale } = useTranslation();
+    const controlLabelsRef = useRef(mapControlLabels(t));
 
     useEffect(() => {
         onPickRef.current = onPick;
         onUnavailableRef.current = onUnavailable;
+        controlLabelsRef.current = mapControlLabels(t);
     });
 
     useEffect(() => {
@@ -92,6 +101,7 @@ export function RouteMap({
                     center: toLngLat(initialView.current.center),
                     zoom: initialView.current.zoom,
                     attributionControl: { compact: true },
+                    locale: controlLabelsRef.current,
                 });
 
                 libraryRef.current = library;
@@ -137,7 +147,7 @@ export function RouteMap({
             mapRef.current = null;
             markersRef.current = [];
         };
-    }, [styleUrl]);
+    }, [styleUrl, locale]);
 
     useEffect(() => {
         stopsRef.current = stops;

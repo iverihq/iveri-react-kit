@@ -15,6 +15,7 @@ import {
     SkeletonText,
     Spinner,
     StatCard,
+    StatusSteps,
     Table,
     TableBody,
     TableCell,
@@ -331,6 +332,32 @@ export function Gallery(): React.JSX.Element {
                         hint="needs a van"
                     />
                     <StatCard label="Out of stock" value="0" delta={{ label: 'no change', trend: 'flat' }} />
+                </div>
+            </Section>
+
+            <Section
+                title="Progress"
+                note="A row where the steps have room, a column in a narrow card. The narrow card is a phone's; Georgian and Russian labels are the longest the fleet ships."
+            >
+                <div className="grid gap-4 lg:grid-cols-[18rem_1fr]">
+                    {[
+                        ['ფასი', 'ძებნა', 'მოსვლა', 'გზაში', 'ჩასვლა'],
+                        ['Цена', 'Поиск', 'Подача', 'В пути', 'Прибытие'],
+                    ].map((labels) => (
+                        <div key={labels[0]} className="contents">
+                            {['w-72', 'w-full'].map((width) => (
+                                <div key={width} className={`${width} rounded-lg border border-line p-4`}>
+                                    <StatusSteps
+                                        steps={labels.map((label, index) => ({
+                                            key: label,
+                                            label,
+                                            state: index < 2 ? 'done' : index === 2 ? 'current' : 'upcoming',
+                                        }))}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ))}
                 </div>
             </Section>
 

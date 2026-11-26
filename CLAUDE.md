@@ -176,3 +176,13 @@ those names from `web-shell`'s `shell.map.*` (`map-control-labels.ts`), like the
 catalogue lacks is left out rather than rendered as itself: these are accessible names nobody sees, so a raw key would
 only ever reach a screen reader, and MapLibre's English is the better fallback. MapLibre reads its labels only when the
 map is created, so changing the language rebuilds the map.
+
+## `StatusSteps` is a row only where it fits (2026-11-26)
+
+Each step's label had an equal share of the row and is never broken inside a word, so at a phone's card width taxi's
+"მოსვლა", delivery's "ჩაბარება", the shop's "დადასტურდა" and Russian "Прибытие" were wider than their share and ran
+into the next label (measured in taxi-web at 375: up to 28 pixels over). Below a **32rem container** the steps now stand
+in a column, mark beside label, with the connector running down; from 32rem they are the row they always were. A
+container query, not a screen breakpoint, because one screen holds the steps both full width and in a narrow card.
+restaurant-web drew its own vertical `OrderProgress` for the same collision and can come back to this. The gallery's
+Progress section draws both forms with the fleet's longest labels.

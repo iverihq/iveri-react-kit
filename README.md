@@ -10,6 +10,9 @@ The Iveri design foundation and the shared React primitives every panel is built
 @iveri/react-kit/shell      AdminShell and ProductShell. `react-router` is an optional peer
 @iveri/react-kit/licence    LicenceBadge and LicencePanel, a company's product licence in a
                             product backoffice. `@iveri/contracts` is an optional peer
+@iveri/react-kit/theme-check
+                            findUnknownThemeClasses, for an app's spec: the colour and
+                            type-size classes its source names that the theme does not define
 @iveri/react-kit/theme.css  the Tailwind 4 theme: typefaces, tokens, type scale, elevation,
                             motion and the base layer
 ```
@@ -18,6 +21,33 @@ It depends on `@iveri/contracts` only as an **optional peer**, reached from `/li
 the root never needs it and a consumer's own copy is the only one installed — see `CLAUDE.md` —
 and on `@iveri/nest-sdk` never. Its only runtime dependencies are the three
 self-hosted font packages the theme imports and `intl-messageformat`. React 19 is the peer.
+
+## Checking an app uses only the theme's colours
+
+Tailwind drops a class whose colour the theme does not define, without a word: `text-danger`
+compiles to nothing and an error line renders in the inherited ink. Every app carries one spec:
+
+```ts
+// src/theme-colours.spec.ts
+import { findUnknownThemeClasses } from '@iveri/react-kit/theme-check';
+import { expect, it } from 'vitest';
+
+import css from './index.css?raw';
+
+it('uses only colours and type sizes the theme defines', () => {
+    const sources = import.meta.glob<string>(['./**/*.{ts,tsx}', '!./**/*.spec.{ts,tsx}'], {
+        query: '?raw',
+        import: 'default',
+        eager: true,
+    });
+
+    expect(findUnknownThemeClasses(sources, { css: [css] })).toEqual([]);
+});
+```
+
+Passing `index.css` makes the app's own `@theme` names (`--color-brass`, `--shadow-soft`) count.
+Use a token the theme has — `critical`, `caution`, `positive`, `accent`, `sunken` — rather than a
+Tailwind palette colour, and `text-white` on a filled status colour, as the kit's danger button does.
 
 ## Adopting it in an app
 

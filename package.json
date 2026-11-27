@@ -32,6 +32,10 @@
       "types": "./dist/licence/index.d.ts",
       "default": "./dist/licence/index.js"
     },
+    "./theme-check": {
+      "types": "./dist/theme-check/index.d.ts",
+      "default": "./dist/theme-check/index.js"
+    },
     "./theme.css": "./styles/theme.css",
     "./package.json": "./package.json"
   },

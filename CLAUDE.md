@@ -186,3 +186,14 @@ in a column, mark beside label, with the connector running down; from 32rem they
 container query, not a screen breakpoint, because one screen holds the steps both full width and in a narrow card.
 restaurant-web drew its own vertical `OrderProgress` for the same collision and can come back to this. The gallery's
 Progress section draws both forms with the fleet's longest labels.
+
+## The top bar's page name is never broken inside a word (2026-11-27, 0.30.2)
+
+`AdminShell`'s top bar names the page beside the panel's own controls, which at 375 wide leaves about a hundred pixels:
+restaurant's "შეტყობინებები" and "შეთავაზებები" were broken across two lines by `LONG_WORDS`, and Georgian has no
+hyphenation dictionary, so they read as two words each. The page name now wraps only between words
+(`overflow-wrap: normal`) and is **hidden while its longest word does not fit** (`invisible`, so it keeps its box and can
+be measured; `aria-hidden` while hidden), reappearing when the bar widens. On a phone every panel page draws its own
+heading just below, so nothing is lost. The sidebar and the account button keep `LONG_WORDS`: they have the room to wrap
+a long name, and hiding a name there would hide where a person is. A check for this must compare a label's line count
+with its word count; a word split across lines does not overflow.

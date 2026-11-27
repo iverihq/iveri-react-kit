@@ -111,6 +111,35 @@ describe('AdminShell', () => {
         }
     });
 
+    it('drops the section before the page name when both do not fit', () => {
+        // The section ("Sales") has lost its room; the page's name still fits.
+        const tight = (element: HTMLElement): boolean => element.getAttribute('title') === 'Sales';
+        const scrollWidth = vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(function (
+            this: HTMLElement,
+        ) {
+            return tight(this) ? 90 : 60;
+        });
+        const clientWidth = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (
+            this: HTMLElement,
+        ) {
+            return tight(this) ? 20 : 60;
+        });
+
+        try {
+            renderShell();
+
+            const section = document.querySelector('header [title="Sales"]');
+            const page = document.querySelector('header [title="Orders"]');
+            expect(section?.className).toContain('invisible');
+            expect(section?.className).toContain('shrink-[100]');
+            expect(section?.nextElementSibling?.getAttribute('class')).not.toContain('sm:block');
+            expect(page?.className).not.toContain('invisible');
+        } finally {
+            scrollWidth.mockRestore();
+            clientWidth.mockRestore();
+        }
+    });
+
     it('opens the search box with the keyboard and narrows it to what is typed', () => {
         renderShell();
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 
 import { cn } from '../common/index.js';
@@ -17,6 +17,50 @@ import {
 import { UserMenu, type UserMenuLink } from './UserMenu.js';
 
 const COLLAPSED_KEY = 'iveri.shell.collapsed';
+
+/**
+ * The page's name in the top bar. It takes two lines between words and **never breaks inside a word**: at 375 wide the
+ * bar beside a panel's own controls leaves about a hundred pixels, and "შეტყობინებები" split across two lines reads as
+ * two words. A label whose longest word does not fit is hidden instead, keeping its place so it can be measured, until
+ * the bar widens; the page's own heading, just below, names it on a phone.
+ */
+function PageTitle({ label }: Readonly<{ label: string }>): React.JSX.Element {
+    const element = useRef<HTMLSpanElement | null>(null);
+    const [fits, setFits] = useState(true);
+
+    useLayoutEffect(() => {
+        const current = element.current;
+
+        if (current === null) return undefined;
+
+        const check = (): void => {
+            setFits(current.scrollWidth <= current.clientWidth + 1);
+        };
+        // Absent only outside a browser, where nothing is laid out to overflow.
+        const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(check);
+
+        observer?.observe(current);
+        check();
+
+        return (): void => {
+            observer?.disconnect();
+        };
+    }, [label]);
+
+    return (
+        <span
+            ref={element}
+            title={label}
+            aria-hidden={fits ? undefined : true}
+            className={cn(
+                'line-clamp-2 min-w-0 font-semibold leading-tight text-ink [overflow-wrap:normal]',
+                !fits && 'invisible',
+            )}
+        >
+            {label}
+        </span>
+    );
+}
 
 interface AdminShellProps {
     productName: string;
@@ -218,14 +262,7 @@ export function AdminShell({
                                 <ChevronIcon className="hidden h-3.5 w-3.5 shrink-0 text-faint sm:block" />
                             </>
                         )}
-                        {active !== null && (
-                            <span
-                                title={active.item.label}
-                                className={cn('line-clamp-2 font-semibold leading-tight text-ink', LONG_WORDS)}
-                            >
-                                {active.item.label}
-                            </span>
-                        )}
+                        {active !== null && <PageTitle label={active.item.label} />}
                     </div>
                     <div className="ml-auto flex items-center gap-2">
                         {headerActions}

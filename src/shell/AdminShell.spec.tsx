@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -64,6 +64,51 @@ describe('AdminShell', () => {
         expect(document.querySelector('[class*="text-ellipsis"]')).toBeNull();
         expect(screen.getAllByTitle('Nino Beridze').length).toBeGreaterThan(0);
         expect(screen.getByTitle('Commerce')).toBeTruthy();
+    });
+
+    it("hides the page's name in the top bar, rather than break a word, while its longest word does not fit", () => {
+        const sizes = { scroll: 120, client: 96 };
+        const scrollWidth = vi
+            .spyOn(HTMLElement.prototype, 'scrollWidth', 'get')
+            .mockImplementation(() => sizes.scroll);
+        const clientWidth = vi
+            .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
+            .mockImplementation(() => sizes.client);
+        const resizes: (() => void)[] = [];
+
+        vi.stubGlobal(
+            'ResizeObserver',
+            class {
+                constructor(callback: () => void) {
+                    resizes.push(callback);
+                }
+
+                observe = vi.fn();
+
+                disconnect = vi.fn();
+            },
+        );
+
+        try {
+            renderShell();
+
+            const title = document.querySelector('header [title="Orders"]');
+            expect(title?.className).toContain('[overflow-wrap:normal]');
+            expect(title?.className).toContain('invisible');
+            expect(title?.getAttribute('aria-hidden')).toBe('true');
+
+            // The bar widens (a phone turned on its side), and the name comes back.
+            sizes.client = 160;
+            act(() => {
+                for (const resize of resizes) resize();
+            });
+            expect(title?.className).not.toContain('invisible');
+            expect(title?.hasAttribute('aria-hidden')).toBe(false);
+        } finally {
+            scrollWidth.mockRestore();
+            clientWidth.mockRestore();
+            vi.unstubAllGlobals();
+        }
     });
 
     it('opens the search box with the keyboard and narrows it to what is typed', () => {

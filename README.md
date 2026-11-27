@@ -29,10 +29,11 @@ compiles to nothing and an error line renders in the inherited ink. Every app ca
 
 ```ts
 // src/theme-colours.spec.ts
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import { findUnknownThemeClasses } from '@iveri/react-kit/theme-check';
 import { expect, it } from 'vitest';
-
-import css from './index.css?raw';
 
 it('uses only colours and type sizes the theme defines', () => {
     const sources = import.meta.glob<string>(['./**/*.{ts,tsx}', '!./**/*.spec.{ts,tsx}'], {
@@ -40,10 +41,16 @@ it('uses only colours and type sizes the theme defines', () => {
         import: 'default',
         eager: true,
     });
+    const css = readFileSync(resolve(import.meta.dirname, 'index.css'), 'utf8');
 
+    expect(css).toContain('tailwindcss');
     expect(findUnknownThemeClasses(sources, { css: [css] })).toEqual([]);
 });
 ```
+
+**Read `index.css` from disk, never `import css from './index.css?raw'`**: Vitest hands every stylesheet
+import back as an empty string, `?raw` included, so the app's own names would silently not count. The
+`toContain` proves the file was read.
 
 Passing `index.css` makes the app's own `@theme` names (`--color-brass`, `--shadow-soft`) count.
 Use a token the theme has — `critical`, `caution`, `positive`, `accent`, `sunken` — rather than a

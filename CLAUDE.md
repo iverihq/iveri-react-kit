@@ -197,3 +197,8 @@ be measured; `aria-hidden` while hidden), reappearing when the bar widens. On a 
 heading just below, so nothing is lost. The sidebar and the account button keep `LONG_WORDS`: they have the room to wrap
 a long name, and hiding a name there would hide where a person is. A check for this must compare a label's line count
 with its word count; a word split across lines does not overflow.
+
+**The section gives way first (0.30.3).** From `sm` the bar also names the page's section before a chevron, and at
+1024 with the sidebar open the two shared about 170 pixels, so "შეტყობინებები" was still hidden. The section shrinks
+before the page name (`shrink-[100]`), is set between words only too, and is hidden with its chevron once its longest
+word no longer fits. The sidebar already marks the section from `lg` up, so the page's name is the one to keep.

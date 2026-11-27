@@ -19,12 +19,10 @@ import { UserMenu, type UserMenuLink } from './UserMenu.js';
 const COLLAPSED_KEY = 'iveri.shell.collapsed';
 
 /**
- * The page's name in the top bar. It takes two lines between words and **never breaks inside a word**: at 375 wide the
- * bar beside a panel's own controls leaves about a hundred pixels, and "შეტყობინებები" split across two lines reads as
- * two words. A label whose longest word does not fit is hidden instead, keeping its place so it can be measured, until
- * the bar widens; the page's own heading, just below, names it on a phone.
+ * Whether a label set only between words is as wide as its box: false while its longest word does not fit. Read again
+ * whenever the box changes size; outside a browser nothing is laid out, and everything fits.
  */
-function PageTitle({ label }: Readonly<{ label: string }>): React.JSX.Element {
+function useFitsWholeWords(label: string): [React.RefObject<HTMLSpanElement | null>, boolean] {
     const element = useRef<HTMLSpanElement | null>(null);
     const [fits, setFits] = useState(true);
 
@@ -36,7 +34,6 @@ function PageTitle({ label }: Readonly<{ label: string }>): React.JSX.Element {
         const check = (): void => {
             setFits(current.scrollWidth <= current.clientWidth + 1);
         };
-        // Absent only outside a browser, where nothing is laid out to overflow.
         const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(check);
 
         observer?.observe(current);
@@ -47,18 +44,52 @@ function PageTitle({ label }: Readonly<{ label: string }>): React.JSX.Element {
         };
     }, [label]);
 
+    return [element, fits];
+}
+
+/** Set between words only, never inside one; `invisible` keeps its box so it can be measured again. */
+const WHOLE_WORDS = 'min-w-0 leading-tight [overflow-wrap:normal]';
+
+/**
+ * The page's name in the top bar. It takes two lines between words and **never breaks inside a word**: at 375 wide the
+ * bar beside a panel's own controls leaves about a hundred pixels, and "შეტყობინებები" split across two lines reads as
+ * two words. A label whose longest word does not fit is hidden instead until the bar widens; the page's own heading,
+ * just below, names it.
+ */
+function PageTitle({ label }: Readonly<{ label: string }>): React.JSX.Element {
+    const [element, fits] = useFitsWholeWords(label);
+
     return (
         <span
             ref={element}
             title={label}
             aria-hidden={fits ? undefined : true}
-            className={cn(
-                'line-clamp-2 min-w-0 font-semibold leading-tight text-ink [overflow-wrap:normal]',
-                !fits && 'invisible',
-            )}
+            className={cn('line-clamp-2 font-semibold text-ink', WHOLE_WORDS, !fits && 'invisible')}
         >
             {label}
         </span>
+    );
+}
+
+/**
+ * The section above the page, from `sm` up. It gives way first: it shrinks before the page's name does
+ * (`shrink-[100]`), and once its longest word no longer fits it is hidden with its chevron, leaving the room to the name.
+ */
+function SectionLabel({ label }: Readonly<{ label: string }>): React.JSX.Element {
+    const [element, fits] = useFitsWholeWords(label);
+
+    return (
+        <>
+            <span
+                ref={element}
+                title={label}
+                aria-hidden={fits ? undefined : true}
+                className={cn('hidden shrink-[100] text-muted sm:line-clamp-2', WHOLE_WORDS, !fits && 'invisible')}
+            >
+                {label}
+            </span>
+            <ChevronIcon className={cn('hidden h-3.5 w-3.5 shrink-0 text-faint', fits && 'sm:block')} />
+        </>
     );
 }
 
@@ -251,17 +282,7 @@ export function AdminShell({
                         <MenuIcon />
                     </button>
                     <div className="flex min-w-0 items-center gap-1.5 text-label">
-                        {active?.section.label !== undefined && (
-                            <>
-                                <span
-                                    title={active.section.label}
-                                    className={cn('hidden leading-tight text-muted sm:line-clamp-2', LONG_WORDS)}
-                                >
-                                    {active.section.label}
-                                </span>
-                                <ChevronIcon className="hidden h-3.5 w-3.5 shrink-0 text-faint sm:block" />
-                            </>
-                        )}
+                        {active?.section.label !== undefined && <SectionLabel label={active.section.label} />}
                         {active !== null && <PageTitle label={active.item.label} />}
                     </div>
                     <div className="ml-auto flex items-center gap-2">
